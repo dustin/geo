@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePoint.java,v 1.5 2001/06/14 09:36:14 dustin Exp $
+// $Id: CachePoint.java,v 1.6 2001/06/14 10:17:36 dustin Exp $
 
 package net.spy.geo;
 
@@ -107,11 +107,11 @@ public class CachePoint extends Point {
 			root.appendChild(el);
 		}
 
-		el=d.createElement("longitude");
+		el=d.createElement("latitude");
 		el.appendChild(d.createTextNode("" + getLongitude()));
 		root.appendChild(el);
 
-		el=d.createElement("latitude");
+		el=d.createElement("longitude");
 		el.appendChild(d.createTextNode("" + getLatitude()));
 		root.appendChild(el);
 

@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: GeoDataServlet.java,v 1.2 2001/06/13 22:23:19 dustin Exp $
+// $Id: GeoDataServlet.java,v 1.3 2001/06/14 10:17:37 dustin Exp $
 
 package net.spy.geo;
 
@@ -141,11 +141,11 @@ public class GeoDataServlet extends HttpServlet {
 			Element root=d.createElement("origin");
 			d.appendChild(root);
 
-			Element el=d.createElement("longitude");
+			Element el=d.createElement("latitude");
 			el.appendChild(d.createTextNode("" + p.getLongitude()));
 			root.appendChild(el);
 
-			el=d.createElement("latitude");
+			el=d.createElement("longitude");
 			el.appendChild(d.createTextNode("" + p.getLatitude()));
 			root.appendChild(el);
 
