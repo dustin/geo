@@ -12,7 +12,7 @@ Look up a user by username
 select * from geo_users where user_id = ?
 
 @params
-userid required INTEGER The id of the user you want to look up
+user_id required INTEGER The id of the user you want to look up
 
 @results
 userid INTEGER The user ID

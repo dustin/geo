@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Point.java,v 1.5 2001/06/13 03:45:33 dustin Exp $
+// $Id: Point.java,v 1.6 2001/06/14 09:36:18 dustin Exp $
 
 package net.spy.geo;
 
@@ -88,18 +88,60 @@ public class Point extends Object implements java.io.Serializable {
 		nf.setMaximumFractionDigits(4);
 
 		StringBuffer sb=new StringBuffer();
-		sb.append(nf.format(Math.abs(longitude)));
+		sb.append(Math.abs(getLongDegrees()));
 		sb.append(" ");
-		sb.append(nf.format(decimalPart(longitude)*60));
+		sb.append(nf.format(getLongMinutes()));
 		sb.append("'");
-		sb.append(longitude<0 ? "S" : "N");
+		sb.append(getLongHemisphere());
 		sb.append(" ");
-		sb.append(nf.format(Math.abs(latitude)));
+		sb.append(Math.abs(getLatDegrees()));
 		sb.append(" ");
-		sb.append(nf.format(decimalPart(latitude)*60));
+		sb.append(nf.format(getLatMinutes()));
 		sb.append("'");
-		sb.append(latitude<0 ? "W" : "E");
+		sb.append(getLatHemisphere());
 		return(sb.toString());
+	}
+
+	/**
+	 * Get the whole degrees of the longitude.
+	 */
+	public int getLongDegrees() {
+		return((int)longitude);
+	}
+
+	/**
+	 * Get the minutes of the longitude.
+	 */
+	public float getLongMinutes() {
+		return((float)(decimalPart(longitude)*60f));
+	}
+
+	/**
+	 * Get the longitude hemisphere (N or S).
+	 */
+	public String getLongHemisphere() {
+		return(longitude<0 ? "S" : "N");
+	}
+
+	/**
+	 * Get the whole degrees of the latitude.
+	 */
+	public int getLatDegrees() {
+		return((int)latitude);
+	}
+
+	/**
+	 * Get the minutes of the latitude.
+	 */
+	public float getLatMinutes() {
+		return((float)(decimalPart(latitude)*60f));
+	}
+
+	/**
+	 * Get the latitude hemisphere (W or E).
+	 */
+	public String getLatHemisphere() {
+		return(latitude<0 ? "W" : "E");
 	}
 
 	/**
@@ -108,10 +150,10 @@ public class Point extends Object implements java.io.Serializable {
 	public String toDecimalString() {
 		StringBuffer sb=new StringBuffer();
 		sb.append(Math.abs(longitude));
-		sb.append(longitude<0 ? "S" : "N");
+		sb.append(getLongHemisphere());
 		sb.append(" ");
 		sb.append(Math.abs(latitude));
-		sb.append(latitude<0 ? "W" : "E");
+		sb.append(getLatHemisphere());
 		return(sb.toString());
 	}
 

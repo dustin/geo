@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePoint.java,v 1.4 2001/06/14 07:57:57 dustin Exp $
+// $Id: CachePoint.java,v 1.5 2001/06/14 09:36:14 dustin Exp $
 
 package net.spy.geo;
 
@@ -42,6 +42,38 @@ public class CachePoint extends Point {
 	}
 
 	/**
+	 * Get a cachepoint by ID.
+	 */
+	public CachePoint(int id) throws Exception {
+		super();
+		DBSP dbsp=new GetCachePointByID(new GeoConfig());
+		dbsp.set("id", id);
+		ResultSet rs=dbsp.executeQuery();
+		if(!rs.next()) {
+			throw new Exception("No such ID:  " + id);
+		}
+		initFromResultSet(rs);
+		rs.close();
+		dbsp.close();
+	}
+
+	private void initFromResultSet(ResultSet rs) throws Exception {
+		pointId=rs.getInt("point_id");
+		country=rs.getInt("country");
+		name=rs.getString("name");
+		description=rs.getString("description");
+		waypointId=rs.getString("waypoint_id");
+		approach=rs.getString("approach");
+		creatorId=rs.getInt("creator_id");
+		difficulty=rs.getFloat("difficulty");
+		terrain=rs.getFloat("terrain");
+		dateCreated=rs.getTimestamp("created");
+
+		setLongitude(rs.getFloat("longitude"));
+		setLatitude(rs.getFloat("latitude"));
+	}
+
+	/**
 	 * Print me.
 	 */
 	public String toString() {
@@ -57,7 +89,11 @@ public class CachePoint extends Point {
 		Element root=d.createElement("point");
 		d.appendChild(root);
 
-		Element el=d.createElement("name");
+		Element el=d.createElement("pointid");
+		el.appendChild(d.createTextNode("" + pointId));
+		root.appendChild(el);
+
+		el=d.createElement("name");
 		el.appendChild(d.createTextNode(name));
 		root.appendChild(el);
 
@@ -284,23 +320,9 @@ public class CachePoint extends Point {
 	 * Testing and what not.
 	 */
 	public static void main(String args[]) throws Exception {
-		Vector v=new Vector();
+		CachePoint cp=new CachePoint(Integer.parseInt(args[0]));
 
-		Point home=new Point(37, 22.110, -121, 59.164);
-
-		v.addElement(
-			new CachePoint("GC88C", new Point(37, 15.658, -121, 57.330)));
-		v.addElement(
-			new CachePoint("GC510", new Point(37, 22.299, -122, 05.059)));
-		v.addElement(
-			new CachePoint("BinDir", new Point(42.69, -87.91)));
-
-		PointComparator pcompare=new PointComparator(home);
-		Collections.sort(v, pcompare);
-		for(Enumeration e=v.elements(); e.hasMoreElements(); ) {
-			Point p=(Point)e.nextElement();
-			System.out.println(p + " -- " + home.diff(p));
-		}
+		System.out.println(cp);
 	}
 
 }

@@ -1,0 +1,28 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Save a log entry.
+
+@sql
+insert into geo_log (
+		point_id,
+		user_id,
+		found,
+		info
+	) values (
+		?,
+		?,
+		?,
+		?
+	)
+
+@params
+point_id required INTEGER The point
+user_id required INTEGER The user
+found required BIT Did you find it?
+info required VARCHAR The actual log entry

@@ -1,0 +1,15 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get all of the known points.
+
+@sql
+select * from geo_points where point_id=?
+
+@params
+id required INTEGER The cache point ID

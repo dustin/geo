@@ -1,7 +1,7 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.5 2001/06/14 07:57:53 dustin Exp $
+-- $Id: geo.sql,v 1.6 2001/06/14 09:36:11 dustin Exp $
 --
 
 -- The actual users
@@ -83,6 +83,7 @@ create table geo_log (
 	user_id integer not null,
 	found boolean not null,
 	info text not null,
+	ts timestamp default now(),
 	foreign key(point_id) references geo_points(point_id),
 	foreign key(user_id) references geo_users(user_id)
 );

@@ -1,0 +1,23 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get a country by ISO 2 letter abbreviation.
+
+@sql
+select * from geo_countries where abbr=?
+
+@params
+abbr required VARCHAR The country you want to look up
+
+@results
+id INTEGER The ID
+abbr VARCHAR The two-letter ISO abbreviation
+name VARCHAR The full name of the country
+
+@cachetime
+86400

@@ -1,0 +1,20 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get all countries.
+
+@sql
+select * from geo_countries order by name
+
+@results
+id INTEGER Country ID
+abbr VARCHAR ISO2
+name VARCHAR Name of the country
+
+@cachetime
+86400
