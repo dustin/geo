@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePointList.java,v 1.6 2001/06/14 09:36:15 dustin Exp $
+// $Id: CachePointList.java,v 1.7 2001/06/21 00:17:49 dustin Exp $
 
 package net.spy.geo;
 
@@ -25,9 +25,8 @@ public class CachePointList extends Thread implements java.io.Serializable {
 	 */
 	public CachePointList() throws Exception {
 		super("CachePointList");
-		initPoints();
 		setDaemon(true);
-		start();
+		initPoints();
 	}
 
 	/**
@@ -43,6 +42,7 @@ public class CachePointList extends Thread implements java.io.Serializable {
 			if(cachePoints==null) {
 				cachePoints=new Vector();
 				updatePoints();
+				start();
 			}
 		}
 	}
