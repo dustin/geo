@@ -2,12 +2,21 @@
 
 <project name="geo" default="war" basedir=".">
 
-	<property name="libdir" value="${user.home}/lib/java"/>
+	<property name="libdir" value="lib"/>
+
+	<property name="srcdir" value="src"/>
+	<property name="buildtop" value="=build"/>
+	<property name="builddir" value="${buildtop}/classes"/>
+	<property name="gendir" value="${buildtop}/gen"/>
 
 	<path id="myclasses">
 		<fileset dir="${user.home}/lib/java">
 			<include name="jsdk.jar"/>
+		</fileset>
+		<fileset dir="${libdir}">
 			<include name="spy.jar"/>
+			<include name="jwebkit.jar"/>
+			<include name="spyxmlrpc.jar"/>
 		</fileset>
 		<pathelement path="${user.home}/prog/java/servlet/png"/>
 		<pathelement
@@ -20,35 +29,37 @@
 		<exclude name="**/{arch}/**"/>
 	</patternset>
 
-	<property name="SRCDIR" value="."/>
-	<property name="BUILDDIR" value="."/>
-
-	<taskdef name="spgen" classname="net.spy.util.SPGenTask">
-		<classpath refid="myclasses"/>
-	</taskdef>
+	<taskdef classpathref="myclasses" resource="net/spy/ant/tasks.properties"/>
 
 	<target name="clean" description="Clean up.">
+		<delete dir="${buildtop}"/>
 		<delete>
-			<fileset dir="${BUILDDIR}/net">
-				<include name="**/*.class"/>
-			</fileset>
-			<fileset dir="${BUILDDIR}/net/spy/geo/sp/">
-				<include name="*.java"/>
-			</fileset>
 			<fileset dir=".">
 				<include name="geo.war"/>
 			</fileset>
 		</delete>
 	</target>
 
-	<target name="all" description="Build everything." depends="spgen">
+	<target name="prepare">
+		<mkdir dir="${buildtop}"/>
+		<mkdir dir="${builddir}"/>
+		<mkdir dir="${gendir}"/>
+	</target>
+
+	<target name="all" description="Build everything." depends="prepare,spgen">
 		<javac
-			srcdir="${SRCDIR}"
-			destdir="${BUILDDIR}"
+			srcdir="${gendir}"
+			destdir="${builddir}"
 			deprecation="on"
 			debug="on">
 			<classpath refid="myclasses"/>
-			<include name="net/spy/**/*.java"/>
+		</javac>
+		<javac
+			srcdir="${srcdir}"
+			destdir="${builddir}"
+			deprecation="on"
+			debug="on">
+			<classpath refid="myclasses"/>
 		</javac>
 	</target>
 
@@ -57,8 +68,13 @@
 			<webinf dir="etc/webinf">
 				<patternset refid="arch-stuff"/>
 			</webinf>
-			<lib dir="${libdir}" includes="spy.jar,postgresql.jar"/>
-			<classes dir="." includes="**/*.class,**/*.properties">
+			<lib dir="${libdir}">
+				<patternset refid="arch-stuff"/>
+			</lib>
+			<classes dir="${builddir}" includes="**/*.class,**/*.properties">
+				<patternset refid="arch-stuff"/>
+			</classes>
+			<classes dir="${srcdir}" includes="**/*.class,**/*.properties">
 				<patternset refid="arch-stuff"/>
 			</classes>
 			<fileset dir="jsp">
@@ -80,7 +96,7 @@
 	</target>
 
 	<target name="spgen">
-		<spgen srcdir="${SRCDIR}" destdir="${BUILDDIR}"/>
+		<spgen srcdir="${srcdir}" destdir="${gendir}"/>
 	</target>
 
 </project>

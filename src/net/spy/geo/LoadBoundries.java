@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.*;
 import java.sql.*;
 
-import net.spy.*;
+import net.spy.db.SpyDB;
 
 /**
  * Load the boundries from http://www.census.gov/geo/www/cob/
