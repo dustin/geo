@@ -1,11 +1,13 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Point.java,v 1.2 2001/06/12 07:52:52 dustin Exp $
+// $Id: Point.java,v 1.3 2001/06/12 21:27:15 dustin Exp $
 
 package net.spy.geo;
 
 import java.math.*;
 import java.sql.*;
+import java.util.*;
+import java.text.NumberFormat;
 
 import net.spy.db.*;
 import net.spy.geo.sp.*;
@@ -74,16 +76,22 @@ public class Point extends Object {
 	 * Print this point (hms).
 	 */
 	public String toString() {
+
+		NumberFormat nf=NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(4);
+
 		StringBuffer sb=new StringBuffer();
-		sb.append(Math.abs(longitude));
+		sb.append(nf.format(Math.abs(longitude)));
 		sb.append(" ");
-		sb.append(decimalPart(longitude)*60);
+		sb.append(nf.format(decimalPart(longitude)*60));
+		sb.append("'");
 		sb.append(longitude<0 ? "S" : "N");
 		sb.append(" ");
-		sb.append(Math.abs(latitude));
+		sb.append(nf.format(Math.abs(latitude)));
 		sb.append(" ");
-		sb.append(decimalPart(latitude)*60);
-		sb.append(longitude<0 ? "W" : "E");
+		sb.append(nf.format(decimalPart(latitude)*60));
+		sb.append("'");
+		sb.append(latitude<0 ? "W" : "E");
 		return(sb.toString());
 	}
 
@@ -174,21 +182,34 @@ public class Point extends Object {
 	 */
 	public static void main(String args[]) throws Exception {
 		// Home
-		Point pa=new Point(37, 22.110, -121, 59.164);
+		Vector v=new Vector();
+		Point home=new Point(37, 22.110, -121, 59.164);
 		// GC88C (south)
-		// Point pb=new Point(37, 15.658, -121, 57.330);
+		Point pb=new Point(37, 15.658, -121, 57.330);
 		// GC510 (west)
-		// Point pc=new Point(37, 22.299, -122, 05.059);
+		Point pc=new Point(37, 22.299, -122, 05.059);
 		// test, Bin Dir
-		// Point pd=new Point(42.69, -87.91);
+		Point pd=new Point(42.69, -87.91);
+		v.addElement(pb);
+		v.addElement(pc);
+		v.addElement(pd);
 
-		System.out.println("Home point is " + pa);
+		System.out.println("Home point is " + home);
 
-		if(args.length>0) {
-			Point pb=Point.getPointByZip(Integer.parseInt(args[0]));
-			System.out.println("Other point is " + pb);
-			System.out.println("Difference:  " + pa.diff(pb));
+		/*
+		for(int i=0; i<args.length; i++) {
+			Point p=Point.getPointByZip(Integer.parseInt(args[0]));
+			System.out.println("Arg point is " + p);
+			System.out.println("Difference:  " + home.diff(p));
+			v.addElement(p);
+		}
+		*/
+		System.out.println("Sorting...");
+		PointComparator pcompare=new PointComparator(home);
+		Collections.sort(v, pcompare);
+		for(Enumeration e=v.elements(); e.hasMoreElements(); ) {
+			Point p=(Point)e.nextElement();
+			System.out.println(p + " -- " + home.diff(p));
 		}
 	}
-
 }

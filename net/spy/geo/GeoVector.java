@@ -1,8 +1,10 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: GeoVector.java,v 1.1 2001/06/12 07:52:51 dustin Exp $
+// $Id: GeoVector.java,v 1.2 2001/06/12 21:27:14 dustin Exp $
 
 package net.spy.geo;
+
+import java.text.NumberFormat;
 
 /**
  * Distance and bearing.
@@ -25,8 +27,10 @@ public class GeoVector extends Object {
 	 * String representation.
 	 */
 	public String toString() {
-		return(distance + "mi at " + bearing + " degrees ("
-			+ getDirection() + ")");
+		NumberFormat nf=NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(4);
+		return(nf.format(distance) + "mi at " + nf.format(bearing)
+			+ " degrees (" + getDirection() + ")");
 	}
 
 	/**
