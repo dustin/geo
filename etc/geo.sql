@@ -1,7 +1,7 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.8 2001/06/16 09:53:04 dustin Exp $
+-- $Id: geo.sql,v 1.9 2002/03/06 07:22:41 dustin Exp $
 --
 
 -- The actual users
@@ -101,8 +101,10 @@ create table geo_polys (
 	boundaryy1 float,
 	boundaryx2 float,
 	boundaryy2 float,
+	bbox box,
 	primary key(id)
 );
+create index geo_polys_box on geo_polys using rtree(bbox);
 grant all on geo_polys to nobody;
 grant all on geo_polys_id_seq to nobody;
 
@@ -116,3 +118,9 @@ create table geo_poly_data (
 create index geo_poly_data_bypoly on geo_poly_data(poly_id);
 grant all on geo_poly_data to nobody;
 grant all on geo_poly_data_seq_seq to nobody;
+
+-- I need a function to get a zero-area box from a point.
+create function box(point) returns box as
+	'select box($1, $1)'
+	language 'sql'
+	with (iscachable);

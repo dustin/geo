@@ -1,5 +1,5 @@
 # Copyright (c) 2000  Dustin Sallings <dustin@spy.net>
-# $Id: Makefile,v 1.10 2001/06/16 09:53:02 dustin Exp $
+# $Id: Makefile,v 1.11 2002/03/06 07:22:40 dustin Exp $
 
 JAVAHOME=/usr
 JAR=$(JAVAHOME)/bin/jar
@@ -12,7 +12,7 @@ MYLIB=$(HOME)/lib/java
 
 C1=$(MYLIB):$(MYLIB)/jsdk.jar:$(MYLIB)/spy.jar
 C2=$(MYLIB)/dom.jar:$(MYLIB)/sax.jar:$(MYLIB)/xerces.jar
-S=/System/Library/Frameworks/JavaVM.framework/Versions/1.3/Classes/classes.jar
+S=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar
 CLASSPATH=$(C1):$(C2):$(S):.
 
 CLASSES=\

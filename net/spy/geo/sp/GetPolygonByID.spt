@@ -9,7 +9,8 @@ net.spy.geo.sp
 Get a polygon by ID
 
 @sql
-select * from geo_polys where id=?
+select id, source, name, boundaryx1, boundaryy1, boundaryx2, boundaryy2
+	from geo_polys where id=?
 
 @params
 id required INTEGER Polygon ID
