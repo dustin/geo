@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Point.java,v 1.7 2001/06/14 21:21:19 dustin Exp $
+// $Id: Point.java,v 1.8 2001/06/15 10:23:13 dustin Exp $
 
 package net.spy.geo;
 
@@ -58,13 +58,6 @@ public class Point extends Object implements java.io.Serializable {
 		}
 		double lon=rs.getDouble("longitude");
 		double lat=rs.getDouble("latitude");
-		// XXX:  Backwards compatibility since those were backwards
-		if(lat<0) {
-			System.err.println("Using backwards compatibility!!!");
-			double t=lon;
-			lon=lat;
-			lat=t;
-		}
 		rs.close();
 		dbsp.close();
 		return(new Point(lat, lon));

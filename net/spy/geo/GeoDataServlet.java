@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: GeoDataServlet.java,v 1.4 2001/06/14 21:21:18 dustin Exp $
+// $Id: GeoDataServlet.java,v 1.5 2001/06/15 10:23:11 dustin Exp $
 
 package net.spy.geo;
 
@@ -26,6 +26,9 @@ public class GeoDataServlet extends HttpServlet {
 
 	// The list.
 	private CachePointList list=null;
+
+	private static final int FORMAT_XML=0;
+	private static final int FORMAT_TAB=1;
 
 	/**
 	 * Initialize it.
@@ -90,6 +93,14 @@ public class GeoDataServlet extends HttpServlet {
 			zip_s=null;
 		}
 
+		int format=FORMAT_XML;
+		String format_s =req.getParameter("format");
+		if(format_s!=null && format_s.equals("tab")) {
+			format=FORMAT_TAB;
+		}
+
+		log("Requested format:  " + format_s + "(" + format +")");
+
 		Point p=null;
 
 		if(lon_s != null && lat_s != null) {
@@ -119,9 +130,16 @@ public class GeoDataServlet extends HttpServlet {
 		ServletOutputStream os=res.getOutputStream();
 		try {
 			res.setContentType("text/plain");
-			xmlList(os, p, e);
+			switch(format) {
+				case FORMAT_XML:
+					xmlList(os, p, e);
+					break;
+				case FORMAT_TAB:
+					tabList(os, p, e);
+					break;
+			}
 		} catch(Exception ex) {
-			throw new ServletException("Error sending XML" + ex, ex);
+			throw new ServletException("Error sending report" + ex, ex);
 		}
 		os.close();
 	}
@@ -142,11 +160,11 @@ public class GeoDataServlet extends HttpServlet {
 			d.appendChild(root);
 
 			Element el=d.createElement("latitude");
-			el.appendChild(d.createTextNode("" + p.getLongitude()));
+			el.appendChild(d.createTextNode("" + p.getLatitude()));
 			root.appendChild(el);
 
 			el=d.createElement("longitude");
-			el.appendChild(d.createTextNode("" + p.getLatitude()));
+			el.appendChild(d.createTextNode("" + p.getLongitude()));
 			root.appendChild(el);
 
 			sendDoc(os, d);
@@ -175,6 +193,41 @@ public class GeoDataServlet extends HttpServlet {
 		}
 
 		os.println("\n</geocaches>");
+	}
+
+	// Tab delimited version
+	private void tabList(ServletOutputStream os, Point p, Enumeration en)
+		throws Exception {
+
+		os.println("# Tab delimited point list, generated on " + new Date());
+		os.println("# Fields are as follows:");
+		os.print("# latitude\tlongitude\tname\tplacement date\turl");
+		if(p!=null) {
+			os.println("\tdistance\tbearing\tdirection");
+		} else {
+			os.println("");
+		}
+		os.println("# Distances are in miles");
+		os.println("# lat and long are decimal with negative being south ");
+		os.println("# and west respectively ");
+
+		for(; en.hasMoreElements(); ) {
+			CachePoint cp=(CachePoint)en.nextElement();
+			os.print(cp.getLatitude());
+			os.print("\t" + cp.getLongitude());
+			os.print("\t" + cp.getName());
+			os.print("\t" + cp.getDateCreated());
+			os.print(
+				"\thttp://bleu.west.spy.net/~dustin/geo/showpoint.jsp?point="
+				+ cp.getPointId());
+			if(p!=null) {
+				GeoVector gv=p.diff(cp);
+				os.print("\t" + gv.getDistance());
+				os.print("\t" + gv.getBearing());
+				os.print("\t" + gv.getDirection());
+			}
+			os.println("");
+		}
 	}
 
 	private void sendDoc(OutputStream os, Document d) throws Exception {
