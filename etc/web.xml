@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+	PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+	"http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<!-- arch-tag: 49AA728C-0C06-11D9-889A-000393CFE6B8 -->
+
+<web-app>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<taglib>
+		<taglib-uri>/~dustin/webapp/WEB-INF/intl.tld</taglib-uri>
+		<taglib-location>/WEB-INF/intl.tld</taglib-location>
+	</taglib>
+
+</web-app>

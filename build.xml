@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 
-<project name="TemperatureServlet" default="all" basedir=".">
+<project name="geo" default="war" basedir=".">
+
+	<property name="libdir" value="${user.home}/lib/java"/>
 
 	<path id="myclasses">
 		<fileset dir="${user.home}/lib/java">
@@ -12,6 +14,11 @@
 			path="/afs/@cell/home/dustin/public_html/webapp/WEB-INF/classes"/>
 		<pathelement path="."/>
 	</path>
+
+	<patternset id="arch-stuff">
+		<exclude name="**/*.arch-ids/**"/>
+		<exclude name="**/{arch}/**"/>
+	</patternset>
 
 	<property name="SRCDIR" value="."/>
 	<property name="BUILDDIR" value="."/>
@@ -25,6 +32,12 @@
 			<fileset dir="${BUILDDIR}/net">
 				<include name="**/*.class"/>
 			</fileset>
+			<fileset dir="${BUILDDIR}/net/spy/geo/sp/">
+				<include name="*.java"/>
+			</fileset>
+			<fileset dir=".">
+				<include name="geo.war"/>
+			</fileset>
 		</delete>
 	</target>
 
@@ -37,6 +50,26 @@
 			<classpath refid="myclasses"/>
 			<include name="net/spy/**/*.java"/>
 		</javac>
+	</target>
+
+	<target name="war" depends="all">
+		<war warfile="geo.war" webxml="etc/web.xml">
+			<webinf dir="etc/webinf">
+				<patternset refid="arch-stuff"/>
+			</webinf>
+			<lib dir="${libdir}" includes="spy.jar,postgresql.jar"/>
+			<classes dir="." includes="**/*.class,**/*.properties">
+				<patternset refid="arch-stuff"/>
+			</classes>
+			<fileset dir="jsp">
+				<patternset refid="arch-stuff"/>
+			</fileset>
+		</war>
+	</target>
+
+	<target name="install" depends="war">
+		<copy file="geo.war"
+			tofile="/afs/.spy.net/misc/web/resin/lazy-wars/geo.war"/>
 	</target>
 
 	<target name="geo.jar" depends="all">
