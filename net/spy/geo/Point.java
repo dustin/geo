@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Point.java,v 1.8 2001/06/15 10:23:13 dustin Exp $
+// $Id: Point.java,v 1.9 2001/06/20 11:00:03 dustin Exp $
 
 package net.spy.geo;
 
@@ -251,6 +251,12 @@ public class Point extends Object implements java.io.Serializable {
 
 		System.out.println("Home point is " + home);
 
+		Point other=new Point(Double.parseDouble(args[0]),
+			Double.parseDouble(args[1]));
+
+		System.out.println("Point is " + other);
+
+		/*
 		for(int i=0; i<args.length; i++) {
 			Point p=Point.getPointByZip(Integer.parseInt(args[i]));
 			System.out.println("Arg point is " + p);
@@ -264,5 +270,6 @@ public class Point extends Object implements java.io.Serializable {
 			Point p=(Point)e.nextElement();
 			System.out.println(p + " -- " + home.diff(p));
 		}
+		*/
 	}
 }

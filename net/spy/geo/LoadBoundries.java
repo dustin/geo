@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: LoadBoundries.java,v 1.1 2001/06/16 09:12:34 dustin Exp $
+// $Id: LoadBoundries.java,v 1.2 2001/06/20 11:00:01 dustin Exp $
 
 package net.spy.geo;
 
@@ -35,11 +35,11 @@ public class LoadBoundries extends Object {
 		String buf=r.readLine();
 		while(buf!=null) {
 			// buf is ID
-			r.readLine(); // FIPS Code(s)
-			String name=r.readLine().trim(); // Name
-			r.readLine(); // LSAD
-			r.readLine(); // LSAD Translation
-			r.readLine(); // empty
+			r.readLine();
+			String name=r.readLine().trim();
+			r.readLine();
+			r.readLine();
+			r.readLine();
 
 			name=name.substring(1, name.length()-1);
 
