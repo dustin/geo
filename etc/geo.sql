@@ -1,7 +1,7 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.6 2001/06/14 09:36:11 dustin Exp $
+-- $Id: geo.sql,v 1.7 2001/06/16 09:12:32 dustin Exp $
 --
 
 -- The actual users
@@ -91,3 +91,24 @@ grant all on geo_log to nobody;
 grant all on geo_log_log_id_seq to nobody;
 create index geo_log_bypoint on geo_log(point_id);
 create index geo_log_byuser on geo_log(user_id);
+
+-- Geo points by attribute
+create table geo_polys (
+	id serial,
+	source varchar(64) not null,
+	name text not null,
+	boundry box,
+	primary key(id)
+);
+grant all on geo_polys to nobody;
+grant all on geo_polys_id_seq to nobody;
+
+create table geo_poly_data (
+	seq serial,
+	poly_id integer not null,
+	latitude float not null,
+	longitude float not null,
+	foreign key(poly_id) references geo_polys(id)
+);
+grant all on geo_poly_data to nobody;
+grant all on geo_poly_data_seq_seq to nobody;

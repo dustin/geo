@@ -1,0 +1,24 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get a polygon by ID
+
+@sql
+select * from geo_poly_data where poly_id=? order by seq
+
+@params
+id required INTEGER polygon ID
+
+@results
+seq
+poly_id
+latitude
+longitude
+
+@cachetime
+300

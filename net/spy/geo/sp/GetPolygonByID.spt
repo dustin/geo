@@ -1,0 +1,23 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get a polygon by ID
+
+@sql
+select * from geo_polys where id=?
+
+@params
+id required INTEGER Polygon ID
+
+@results
+id
+source
+name
+
+@cachetime
+3600

@@ -1,0 +1,19 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get the possible areas in which a point my lie.
+
+@sql
+select id from geo_polys where point(?,?) @ boundry;
+
+@params
+latitude required FLOAT Latitude
+longitude required FLOAT Longitude
+
+@results
+id INTEGER The polygon ID.

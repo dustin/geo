@@ -1,5 +1,5 @@
 # Copyright (c) 2000  Dustin Sallings <dustin@spy.net>
-# $Id: Makefile,v 1.8 2001/06/14 09:36:10 dustin Exp $
+# $Id: Makefile,v 1.9 2001/06/16 09:12:31 dustin Exp $
 
 JAVAHOME=/usr
 JAR=$(JAVAHOME)/bin/jar
@@ -29,6 +29,9 @@ CLASSES=\
 		net/spy/geo/sp/GetCachePointByID.class \
 		net/spy/geo/sp/GetLogEntries.class \
 		net/spy/geo/sp/SaveLogEntry.class \
+		net/spy/geo/sp/GetPolygonByID.class \
+		net/spy/geo/sp/GetPolygonDataByID.class \
+		net/spy/geo/sp/GetPossibleAreas.class \
 		net/spy/geo/GeoConfig.class \
 		net/spy/geo/Point.class \
 		net/spy/geo/PointComparator.class \
@@ -39,7 +42,9 @@ CLASSES=\
 		net/spy/geo/GeoUser.class \
 		net/spy/geo/GeoDataServlet.class \
 		net/spy/geo/GeoBean.class \
-		net/spy/geo/LogEntry.class
+		net/spy/geo/LogEntry.class \
+		net/spy/geo/Polygon.class \
+		net/spy/geo/LoadBoundries.class
 
 all: $(CLASSES)
 
