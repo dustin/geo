@@ -18,6 +18,10 @@ id required INTEGER Polygon ID
 id
 source
 name
+boundaryx1
+boundaryy1
+boundaryx2
+boundaryy2
 
 @cachetime
 3600

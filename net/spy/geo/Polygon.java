@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Polygon.java,v 1.1 2001/06/16 09:12:35 dustin Exp $
+// $Id: Polygon.java,v 1.2 2001/06/16 09:53:06 dustin Exp $
 
 package net.spy.geo;
 
@@ -26,26 +26,10 @@ public class Polygon extends Vector {
 	}
 
 	/**
-	 * Get a polygon by integer ID.
+	 * For subclasses who will set the name specifically.
 	 */
-	public static Polygon getPolygonByID(int id) throws Exception {
-		DBSP dbsp=new GetPolygonByID(new GeoConfig());
-		dbsp.set("id", id);
-		ResultSet rs=dbsp.executeQuery();
-		rs.next();
-		String name=rs.getString("name");
-		rs.close();
-		dbsp.close();
-		dbsp=new GetPolygonDataByID(new GeoConfig());
-		dbsp.set("id", id);
-		rs=dbsp.executeQuery();
-
-		Polygon poly=new Polygon(name);
-		while(rs.next()) {
-			poly.addElement(new Point(
-				rs.getFloat("latitude"), rs.getFloat("longitude") ));
-		}
-		return(poly);
+	protected Polygon() {
+		super();
 	}
 
 	/**
@@ -53,8 +37,8 @@ public class Polygon extends Vector {
 	 *
 	 * @return null if there's no match.
 	 */
-	public static Polygon getAreaForPoint(Point p) throws Exception {
-		Polygon rv=null;
+	public static DBPolygon getAreaForPoint(Point p) throws Exception {
+		DBPolygon rv=null;
 		DBSP dbsp=new GetPossibleAreas(new GeoConfig());
 		dbsp.set("latitude", (float)p.getLatitude());
 		dbsp.set("longitude", (float)p.getLongitude());
@@ -70,7 +54,7 @@ public class Polygon extends Vector {
 			Integer io=(Integer)e.nextElement();
 			int i=io.intValue();
 
-			Polygon poly=getPolygonByID(i);
+			DBPolygon poly=new DBPolygon(i);
 			if(poly.containsPoint(p)) {
 				rv=poly;
 			}
@@ -131,15 +115,25 @@ public class Polygon extends Vector {
 		return(name);
 	}
 
+	/**
+	 * Set the name of this polygon.
+	 */
+	protected void setName(String name) {
+		this.name=name;
+	}
+
 	public static void main(String args[]) throws Exception {
 		Point p=new Point(Double.parseDouble(args[0]),
 			Double.parseDouble(args[1]));
 
-		Polygon poly=getAreaForPoint(p);
+		DBPolygon poly=getAreaForPoint(p);
 		if(poly==null) {
 			System.out.println("No matching area.");
 		} else {
 			System.out.println("Point is in " + poly.getName());
+			System.out.println("Center point is " + poly.getCenter());
+			System.out.println("Width is " + poly.getWidth());
+			System.out.println("Height is " + poly.getHeight());
 		}
 	}
 

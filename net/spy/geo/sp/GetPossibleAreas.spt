@@ -9,7 +9,9 @@ net.spy.geo.sp
 Get the possible areas in which a point my lie.
 
 @sql
-select id from geo_polys where point(?,?) @ boundry;
+select id from geo_polys
+	where point(?,?) @ box(point(boundaryy1, boundaryx1),
+							point(boundaryy2, boundaryx2))
 
 @params
 latitude required FLOAT Latitude

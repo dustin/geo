@@ -1,5 +1,5 @@
 # Copyright (c) 2000  Dustin Sallings <dustin@spy.net>
-# $Id: Makefile,v 1.9 2001/06/16 09:12:31 dustin Exp $
+# $Id: Makefile,v 1.10 2001/06/16 09:53:02 dustin Exp $
 
 JAVAHOME=/usr
 JAR=$(JAVAHOME)/bin/jar
@@ -44,6 +44,7 @@ CLASSES=\
 		net/spy/geo/GeoBean.class \
 		net/spy/geo/LogEntry.class \
 		net/spy/geo/Polygon.class \
+		net/spy/geo/DBPolygon.class \
 		net/spy/geo/LoadBoundries.class
 
 all: $(CLASSES)

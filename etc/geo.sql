@@ -1,7 +1,7 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.7 2001/06/16 09:12:32 dustin Exp $
+-- $Id: geo.sql,v 1.8 2001/06/16 09:53:04 dustin Exp $
 --
 
 -- The actual users
@@ -97,7 +97,10 @@ create table geo_polys (
 	id serial,
 	source varchar(64) not null,
 	name text not null,
-	boundry box,
+	boundaryx1 float,
+	boundaryy1 float,
+	boundaryx2 float,
+	boundaryy2 float,
 	primary key(id)
 );
 grant all on geo_polys to nobody;
@@ -110,5 +113,6 @@ create table geo_poly_data (
 	longitude float not null,
 	foreign key(poly_id) references geo_polys(id)
 );
+create index geo_poly_data_bypoly on geo_poly_data(poly_id);
 grant all on geo_poly_data to nobody;
 grant all on geo_poly_data_seq_seq to nobody;
