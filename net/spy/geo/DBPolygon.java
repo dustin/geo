@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: DBPolygon.java,v 1.1 2001/06/16 09:53:05 dustin Exp $
+// $Id: DBPolygon.java,v 1.2 2001/06/16 11:11:11 dustin Exp $
 
 package net.spy.geo;
 
@@ -80,11 +80,11 @@ public class DBPolygon extends Polygon {
 		double max=Math.max(boundary1.getLatitude(), boundary2.getLatitude());
 		double min=Math.min(boundary1.getLatitude(), boundary2.getLatitude());
 		double diff=(max-min);
-		double newlat=max-diff;
+		double newlat=max-(diff/2);
 		max=Math.max(boundary1.getLongitude(), boundary2.getLongitude());
 		min=Math.min(boundary1.getLongitude(), boundary2.getLongitude());
 		diff=(max-min);
-		double newlon=max-diff;
+		double newlon=max-(diff/2);
 		return(new Point(newlat, newlon));
 	}
 
