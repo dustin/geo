@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Polygon.java,v 1.2 2001/06/16 09:53:06 dustin Exp $
+// $Id: Polygon.java,v 1.3 2001/06/19 07:34:29 dustin Exp $
 
 package net.spy.geo;
 
@@ -33,12 +33,10 @@ public class Polygon extends Vector {
 	}
 
 	/**
-	 * Ask for a Polygon containing the given Point.
-	 *
-	 * @return null if there's no match.
+	 * Ask for an Enumeration of DBPolygons containing the given Point.
 	 */
-	public static DBPolygon getAreaForPoint(Point p) throws Exception {
-		DBPolygon rv=null;
+	public static Enumeration getAreasForPoint(Point p) throws Exception {
+		Vector rv=new Vector();
 		DBSP dbsp=new GetPossibleAreas(new GeoConfig());
 		dbsp.set("latitude", (float)p.getLatitude());
 		dbsp.set("longitude", (float)p.getLongitude());
@@ -50,17 +48,17 @@ public class Polygon extends Vector {
 		rs.close();
 		dbsp.close();
 
-		for(Enumeration e=v.elements(); rv==null && e.hasMoreElements(); ) {
+		for(Enumeration e=v.elements(); e.hasMoreElements(); ) {
 			Integer io=(Integer)e.nextElement();
 			int i=io.intValue();
 
 			DBPolygon poly=new DBPolygon(i);
 			if(poly.containsPoint(p)) {
-				rv=poly;
+				rv.addElement(poly);
 			}
 		}
 
-		return(rv);
+		return(rv.elements());
 	}
 
 	/**
@@ -126,14 +124,17 @@ public class Polygon extends Vector {
 		Point p=new Point(Double.parseDouble(args[0]),
 			Double.parseDouble(args[1]));
 
-		DBPolygon poly=getAreaForPoint(p);
-		if(poly==null) {
-			System.out.println("No matching area.");
+		Enumeration polys=getAreasForPoint(p);
+		if(polys.hasMoreElements()) {
+			for(; polys.hasMoreElements(); ) {
+				DBPolygon poly=(DBPolygon)polys.nextElement();
+				System.out.println("Point is in " + poly.getName());
+				System.out.println("Center point is " + poly.getCenter());
+				System.out.println("Width is " + poly.getWidth());
+				System.out.println("Height is " + poly.getHeight());
+			}
 		} else {
-			System.out.println("Point is in " + poly.getName());
-			System.out.println("Center point is " + poly.getCenter());
-			System.out.println("Width is " + poly.getWidth());
-			System.out.println("Height is " + poly.getHeight());
+			System.out.println("No matching area.");
 		}
 	}
 

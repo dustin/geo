@@ -12,6 +12,8 @@ Get the possible areas in which a point my lie.
 select id from geo_polys
 	where point(?,?) @ box(point(boundaryy1, boundaryx1),
 							point(boundaryy2, boundaryx2))
+	order by area(box(point(boundaryy1, boundaryx1),
+							point(boundaryy2, boundaryx2)))
 
 @params
 latitude required FLOAT Latitude
