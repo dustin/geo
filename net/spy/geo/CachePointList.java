@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePointList.java,v 1.1 2001/06/12 23:57:48 dustin Exp $
+// $Id: CachePointList.java,v 1.2 2001/06/13 01:01:25 dustin Exp $
 
 package net.spy.geo;
 
@@ -60,18 +60,44 @@ public class CachePointList extends Thread {
 	}
 
 	/**
-	 * Get the list of cache points sorted by distance from a given point.
+	 * Get the list of cache points within a certain range sorted by distance
+	 * from a given point.
+	 *
+	 * @param p the point of origin we want to compare distances from
+	 * @param max_distance the maximum distance in miles we care about
+	 *
+	 * @return an Enumeration of CachePoint objects
 	 */
-	public Enumeration getPoints(Point p) {
+	public Enumeration getPoints(Point p, double max_distance) {
 		Vector v=new Vector();
 		synchronized(cachePoints) {
 			for(Enumeration e=cachePoints.elements(); e.hasMoreElements();) {
-				v.addElement(e.nextElement());
+				if(max_distance>0) {
+					CachePoint cp=(CachePoint)e.nextElement();
+					GeoVector gv=p.diff(cp);
+					if(gv.getDistance() <= max_distance) {
+						v.addElement(cp);
+					}
+				} else {
+					// Always add if the max_distance is <=0
+					v.addElement(e.nextElement());
+				}
 			}
 		}
 		PointComparator pcompare=new PointComparator(p);
 		Collections.sort(v, pcompare);
 		return(v.elements());
+	}
+
+	/**
+	 * Get all of the points sorted by distance from a given point.
+	 *
+	 * @param p the point of origin we want to compare distances from
+	 *
+	 * @return an Enumeration of CachePoint objects
+	 */
+	public Enumeration getPoints(Point p) {
+		return(getPoints(p, -1.0d));
 	}
 
 	/**
@@ -97,12 +123,20 @@ public class CachePointList extends Thread {
 
 		System.out.println("Unordered:\n");
 		for(Enumeration e=cpl.getPoints(); e.hasMoreElements(); ) {
-			System.out.println("\t" + e.nextElement());
+			CachePoint cp=(CachePoint)e.nextElement();
+			System.out.println(cp + " - " + home.diff(cp));
 		}
 
-		System.out.println("Ordered:\n");
+		System.out.println("\nOrdered:\n");
 		for(Enumeration e=cpl.getPoints(home); e.hasMoreElements(); ) {
-			System.out.println("\t" + e.nextElement());
+			CachePoint cp=(CachePoint)e.nextElement();
+			System.out.println(cp + " - " + home.diff(cp));
+		}
+
+		System.out.println("\nOrdered, max 100 miles:\n");
+		for(Enumeration e=cpl.getPoints(home, 100d); e.hasMoreElements(); ) {
+			CachePoint cp=(CachePoint)e.nextElement();
+			System.out.println(cp + " - " + home.diff(cp));
 		}
 
 	}

@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePoint.java,v 1.1 2001/06/12 23:57:48 dustin Exp $
+// $Id: CachePoint.java,v 1.2 2001/06/13 01:01:24 dustin Exp $
 
 package net.spy.geo;
 
@@ -11,16 +11,59 @@ import java.util.*;
  */
 public class CachePoint extends Point {
 
+	private int pointId=-1;
+	private String name=null;
 	private String description=null;
+	private int creatorId=-1;
+	private String waypointId=null;
+	private float difficulty=1;
+	private float terrain=1;
+	private Date dateCreated=null;
+	private double approach=-1;
 
 	/**
 	 * Get an instance of CachePoint.
 	 */
-	public CachePoint(String description, Point p) {
+	public CachePoint(String name, Point p) {
 		super();
-		this.description=description;
+		this.name=name;
 		setLongitude(p.getLongitude());
 		setLatitude(p.getLatitude());
+	}
+
+	/**
+	 * Print me.
+	 */
+	public String toString() {
+		return(name + " - " + super.toString());
+	}
+
+	/**
+	 * Set the point ID.
+	 */
+	protected void setPointId(int pointId) {
+		this.pointId=pointId;
+	}
+
+	/**
+	 * Get the point ID.
+	 */
+	public int getPointId() {
+		return(pointId);
+	}
+
+	/**
+	 * Set the name of this CachePoint.
+	 */
+	public void setName(String name) {
+		this.name=name;
+	}
+
+	/**
+	 * Get the name of this CachePoint.
+	 */
+	public String getName() {
+		return(name);
 	}
 
 	/**
@@ -31,10 +74,95 @@ public class CachePoint extends Point {
 	}
 
 	/**
-	 * Print me.
+	 * Set the description of this CachePoint.
 	 */
-	public String toString() {
-		return(description + " - " + super.toString());
+	public void setDescription(String description) {
+		this.description=description;
+	}
+
+	/**
+	 * Set the creator ID.
+	 */
+	public void setCreatorId(int creatorId) {
+		this.creatorId=creatorId;
+	}
+
+	/**
+	 * Get the creator ID.
+	 */
+	public int getCreatorId() {
+		return(creatorId);
+	}
+
+	/**
+	 * Set the waypoint ID.
+	 */
+	public void setWaypointId(String waypointId) {
+		this.waypointId=waypointId;
+	}
+
+	/**
+	 * Get the waypoint ID.
+	 */
+	public String getWaypointId() {
+		return(waypointId);
+	}
+
+	/**
+	 * Set the difficulty level.
+	 */
+	public void setDifficulty(float difficulty) {
+		this.difficulty=difficulty;
+	}
+
+	/**
+	 * Get the difficulty level.
+	 */
+	public float getDifficulty() {
+		return(difficulty);
+	}
+
+	/**
+	 * Set the terrain level.
+	 */
+	public void setTerrain(float terrain) {
+		this.terrain=terrain;
+	}
+
+	/**
+	 * Get the terrain level.
+	 */
+	public float getTerrain() {
+		return(terrain);
+	}
+
+	/**
+	 * Set the date this record was created.
+	 */
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated=dateCreated;
+	}
+
+	/**
+	 * Get the date this record was created.
+	 */
+	public Date getDateCreated() {
+		return(dateCreated);
+	}
+
+	/**
+	 * Set the approach bearing (negative number means no approach
+	 * bearing).
+	 */
+	public void setApproach(double approach) {
+		this.approach=approach;
+	}
+
+	/**
+	 * Get the recommended angle of approach.
+	 */
+	public double getApproach() {
+		return(approach);
 	}
 
 	/**
