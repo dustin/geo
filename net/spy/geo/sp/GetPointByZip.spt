@@ -1,0 +1,22 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get point data by zip code.
+
+@sql
+select latitude, longitude from zips where zipcode = ?
+
+@params
+zipcode required INTEGER The zipcode for which we want the coordinates
+
+@results
+latitude DOUBLE The latitude
+longitude DOUBLE The longitude
+
+@cachetime
+900
