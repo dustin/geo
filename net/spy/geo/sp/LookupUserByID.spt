@@ -9,7 +9,7 @@ net.spy.geo.sp
 Look up a user by username
 
 @sql
-select * from geo_users where user_id = ?
+select * from geo.users where user_id = ?
 
 @params
 user_id required INTEGER The id of the user you want to look up

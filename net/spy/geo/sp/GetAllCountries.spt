@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get all countries.
 
 @sql
-select * from geo_countries order by name
+select * from geo.countries order by name
 
 @results
 id INTEGER Country ID

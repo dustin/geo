@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get the possible areas in which a point my lie.
 
 @sql
-select id, source from geo_polys
+select id, source from geo.polys
 	where point(?,?) @ bbox
 	order by area(bbox)
 

@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get a country by ISO 2 letter abbreviation.
 
 @sql
-select * from geo_countries where abbr=?
+select * from geo.countries where abbr=?
 
 @params
 abbr required VARCHAR The country you want to look up

@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get all of the known points.
 
 @sql
-select * from geo_points where point_id=?
+select * from geo.points where point_id=?
 
 @params
 id required INTEGER The cache point ID

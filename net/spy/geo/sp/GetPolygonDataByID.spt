@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get a polygon by ID
 
 @sql
-select * from geo_poly_data where poly_id=? order by seq
+select * from geo.poly_data where poly_id=? order by seq
 
 @params
 id required INTEGER polygon ID

@@ -10,7 +10,7 @@ Add a new user.
 
 @sql
 insert
-	into geo_users (
+	into geo.users (
 		username,
 		password,
 		full_name,

@@ -9,7 +9,7 @@ net.spy.geo.sp
 Add a new point.
 
 @sql
-insert into geo_points (
+insert into geo.points (
 		creator_id,
 		name,
 		description,

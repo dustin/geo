@@ -9,7 +9,7 @@ net.spy.geo.sp
 Save a log entry.
 
 @sql
-insert into geo_log (
+insert into geo.log (
 		point_id,
 		user_id,
 		found,

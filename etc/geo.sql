@@ -1,11 +1,11 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.9 2002/03/06 07:22:41 dustin Exp $
+-- $Id: geo.sql,v 1.10 2002/12/01 09:53:15 dustin Exp $
 --
 
 -- The actual users
-create table geo_users (
+create table geo.users (
 	user_id serial,
 	username varchar(20) not null,
 	password varchar(64) not null,
@@ -19,27 +19,27 @@ create table geo_users (
 	ts timestamp default now(),
 	primary key(user_id)
 );
-create unique index geo_users_byname on geo_users(username);
-grant all on geo_users to nobody;
-grant all on geo_users_user_id_seq to nobody;
+create unique index users_byname on geo.users(username);
+grant all on geo.users to nobody;
+grant all on geo.users_user_id_seq to nobody;
 
 -- The country list
-create table geo_countries (
+create table geo.countries (
 	id serial,
 	abbr char(2),
 	name varchar(64),
 	primary key(id)
 );
-grant all on geo_countries to nobody;
-grant all on geo_countries_id_seq to nobody;
-create unique index geo_countries_byabbr on geo_countries(abbr);
+grant all on geo.countries to nobody;
+grant all on geo.countries_id_seq to nobody;
+create unique index countries_byabbr on geo.countries(abbr);
 
 -- Sequence for giving points numbers
-create sequence geo_point_namer minvalue 1000;
-grant all on geo_point_namer to nobody;
+create sequence geo.point_namer minvalue 1000;
+grant all on geo.point_namer to nobody;
 
 -- Points go here.
-create table geo_points (
+create table geo.points (
 	point_id serial,
 	creator_id integer not null,
 	name text not null,
@@ -54,46 +54,46 @@ create table geo_points (
 	retired boolean default false,
 	created timestamp default now(),
 	primary key(point_id),
-	foreign key(creator_id) references geo_users(user_id),
-	foreign key(country) references geo_countries(id)
+	foreign key(creator_id) references geo.users(user_id),
+	foreign key(country) references geo.countries(id)
 );
-create unique index geo_points_bypid on geo_points(waypoint_id);
-grant all on geo_points to nobody;
-grant all on geo_points_point_id_seq to nobody;
+create unique index points_bypid on geo.points(waypoint_id);
+grant all on geo.points to nobody;
+grant all on geo.points_point_id_seq to nobody;
 
 -- How about voting?
-create table geo_votes (
+create table geo.votes (
 	vote_id serial,
 	point_id integer not null,
 	user_id integer not null,
 	vote smallint not null,
 	ts timestamp default now(),
-	foreign key(point_id) references geo_points(point_id),
-	foreign key(user_id) references geo_users(user_id)
+	foreign key(point_id) references geo.points(point_id),
+	foreign key(user_id) references geo.users(user_id)
 );
-grant all on geo_votes to nobody;
-grant all on geo_votes_vote_id_seq to nobody;
-create index geo_votes_bypoint on geo_votes(point_id);
-create index geo_votes_byuser on geo_votes(user_id);
+grant all on geo.votes to nobody;
+grant all on geo.votes_vote_id_seq to nobody;
+create index votes_bypoint on geo.votes(point_id);
+create index votes_byuser on geo.votes(user_id);
 
 -- Log the experience
-create table geo_log (
+create table geo.log (
 	log_id serial,
 	point_id integer not null,
 	user_id integer not null,
 	found boolean not null,
 	info text not null,
 	ts timestamp default now(),
-	foreign key(point_id) references geo_points(point_id),
-	foreign key(user_id) references geo_users(user_id)
+	foreign key(point_id) references geo.points(point_id),
+	foreign key(user_id) references geo.users(user_id)
 );
-grant all on geo_log to nobody;
-grant all on geo_log_log_id_seq to nobody;
-create index geo_log_bypoint on geo_log(point_id);
-create index geo_log_byuser on geo_log(user_id);
+grant all on geo.log to nobody;
+grant all on geo.log_log_id_seq to nobody;
+create index log_bypoint on geo.log(point_id);
+create index log_byuser on geo.log(user_id);
 
 -- Geo points by attribute
-create table geo_polys (
+create table geo.polys (
 	id serial,
 	source varchar(64) not null,
 	name text not null,
@@ -104,23 +104,23 @@ create table geo_polys (
 	bbox box,
 	primary key(id)
 );
-create index geo_polys_box on geo_polys using rtree(bbox);
-grant all on geo_polys to nobody;
-grant all on geo_polys_id_seq to nobody;
+create index polys_box on geo.polys using rtree(bbox);
+grant all on geo.polys to nobody;
+grant all on geo.polys_id_seq to nobody;
 
-create table geo_poly_data (
+create table geo.poly_data (
 	seq serial,
 	poly_id integer not null,
 	latitude float not null,
 	longitude float not null,
-	foreign key(poly_id) references geo_polys(id)
+	foreign key(poly_id) references geo.polys(id)
 );
-create index geo_poly_data_bypoly on geo_poly_data(poly_id);
-grant all on geo_poly_data to nobody;
-grant all on geo_poly_data_seq_seq to nobody;
+create index poly_data_bypoly on geo.poly_data(poly_id);
+grant all on geo.poly_data to nobody;
+grant all on geo.poly_data_seq_seq to nobody;
 
 -- I need a function to get a zero-area box from a point.
-create function box(point) returns box as
+create function geo.box(point) returns box as
 	'select box($1, $1)'
 	language 'sql'
 	with (iscachable);

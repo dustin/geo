@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get the list of logEntries for a point.
 
 @sql
-select * from geo_log where point_id = ?
+select * from geo.log where point_id = ?
 	order by ts desc
 
 @params

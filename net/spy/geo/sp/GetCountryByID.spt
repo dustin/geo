@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get a country by integer ID.
 
 @sql
-select * from geo_countries where id=?
+select * from geo.countries where id=?
 
 @params
 id required INTEGER The country ID you want to look up

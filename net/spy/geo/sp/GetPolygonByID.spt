@@ -10,7 +10,7 @@ Get a polygon by ID
 
 @sql
 select id, source, name, boundaryx1, boundaryy1, boundaryx2, boundaryy2
-	from geo_polys where id=?
+	from geo.polys where id=?
 
 @params
 id required INTEGER Polygon ID

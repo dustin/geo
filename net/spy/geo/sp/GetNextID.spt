@@ -9,7 +9,7 @@ net.spy.geo.sp
 Get the next ID for building waypoint IDs.
 
 @sql
-select nextval('geo_point_namer') as id;
+select nextval('geo.point_namer') as id;
 
 @results
 id INTEGER Next ID.
