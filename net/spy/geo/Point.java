@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Point.java,v 1.3 2001/06/12 21:27:15 dustin Exp $
+// $Id: Point.java,v 1.4 2001/06/12 23:57:49 dustin Exp $
 
 package net.spy.geo;
 
@@ -37,6 +37,13 @@ public class Point extends Object {
 		super();
 		this.longitude=fromhms(longitude, long_minutes);
 		this.latitude=fromhms(latitude, lat_minutes);
+	}
+
+	/**
+	 * An internal constructor for building the objects more specifically.
+	 */
+	protected Point() {
+		super();
 	}
 
 	/**
@@ -122,6 +129,20 @@ public class Point extends Object {
 		return(latitude);
 	}
 
+	/**
+	 * Set the longitude.
+	 */
+	protected void setLongitude(double longitude) {
+		this.longitude=longitude;
+	}
+
+	/**
+	 * Set the latitude.
+	 */
+	protected void setLatitude(double latitude) {
+		this.latitude=latitude;
+	}
+
 	// Degree sin.
 	private double sin(double a) {
 		double rv=Math.sin(Math.toRadians(a));
@@ -183,27 +204,17 @@ public class Point extends Object {
 	public static void main(String args[]) throws Exception {
 		// Home
 		Vector v=new Vector();
+
 		Point home=new Point(37, 22.110, -121, 59.164);
-		// GC88C (south)
-		Point pb=new Point(37, 15.658, -121, 57.330);
-		// GC510 (west)
-		Point pc=new Point(37, 22.299, -122, 05.059);
-		// test, Bin Dir
-		Point pd=new Point(42.69, -87.91);
-		v.addElement(pb);
-		v.addElement(pc);
-		v.addElement(pd);
 
 		System.out.println("Home point is " + home);
 
-		/*
 		for(int i=0; i<args.length; i++) {
 			Point p=Point.getPointByZip(Integer.parseInt(args[0]));
 			System.out.println("Arg point is " + p);
 			System.out.println("Difference:  " + home.diff(p));
 			v.addElement(p);
 		}
-		*/
 		System.out.println("Sorting...");
 		PointComparator pcompare=new PointComparator(home);
 		Collections.sort(v, pcompare);
