@@ -1,0 +1,12 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get all of the known points.
+
+@sql
+select city as name, longitude, latitude from zips where state='CA'

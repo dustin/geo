@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: PointComparator.java,v 1.1 2001/06/12 21:27:17 dustin Exp $
+// $Id: PointComparator.java,v 1.2 2001/06/13 03:45:35 dustin Exp $
 
 package net.spy.geo;
 
@@ -9,7 +9,8 @@ import java.util.*;
 /**
  * Order Points by distance from a common point.
  */
-public class PointComparator extends Object implements Comparator {
+public class PointComparator extends Object
+	implements Comparator, java.io.Serializable {
 
 	private Point commonPoint=null;
 

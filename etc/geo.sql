@@ -1,7 +1,7 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.2 2001/06/13 01:01:23 dustin Exp $
+-- $Id: geo.sql,v 1.3 2001/06/13 03:45:26 dustin Exp $
 --
 
 -- The actual users
@@ -35,6 +35,7 @@ create table geo_points (
 	difficulty float default 1 not null,
 	terrain float default 1 not null,
 	approach float default -1,
+	retired boolean default false,
 	created timestamp default now(),
 	primary key(point_id),
 	foreign key(creator_id) references geo_users(user_id)

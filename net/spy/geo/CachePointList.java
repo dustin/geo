@@ -1,17 +1,22 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePointList.java,v 1.2 2001/06/13 01:01:25 dustin Exp $
+// $Id: CachePointList.java,v 1.3 2001/06/13 03:45:27 dustin Exp $
 
 package net.spy.geo;
 
 import java.util.*;
+import java.sql.*;
+
+import net.spy.db.*;
+import net.spy.geo.sp.*;
 
 /**
  * This object maintains the list of points.
  */
-public class CachePointList extends Thread {
+public class CachePointList extends Thread implements java.io.Serializable {
 
-	private Vector cachePoints=null;
+	private static String CACHE_MUTEX="CACHE_MUTEX";
+	private static Vector cachePoints=null;
 
 	/**
 	 * Get an instance of CachePointList.
@@ -31,20 +36,41 @@ public class CachePointList extends Thread {
 
 	// Initially get the points.
 	private void initPoints() throws Exception {
-		cachePoints=new Vector();
-		updatePoints();
+		synchronized(CACHE_MUTEX) {
+			if(cachePoints==null) {
+				cachePoints=new Vector();
+				updatePoints();
+			}
+		}
 	}
 
 	// Get new points periodically.
 	private void updatePoints() {
-		synchronized(cachePoints) {
+		Vector v=new Vector();
+		try {
+			DBSP dbsp=new GetAllPoints(new GeoConfig());
+			ResultSet rs=dbsp.executeQuery();
+			while(rs.next()) {
+				v.addElement(
+					new CachePoint(rs.getString("name"),
+						new Point(rs.getDouble("longitude"),
+								  rs.getDouble("latitudE"))));
+			}
+			rs.close();
+			dbsp.close();
+		} catch(Exception e) {
+			System.err.println("Error getting points");
+			e.printStackTrace();
+		}
+
+		// Now that we've found them all, put them in
+		synchronized(CACHE_MUTEX) {
+			// Out with the old
 			cachePoints.removeAllElements();
-			cachePoints.addElement(
-				new CachePoint("GC88C", new Point(37, 15.658, -121, 57.330)));
-			cachePoints.addElement(
-				new CachePoint("GC510", new Point(37, 22.299, -122, 05.059)));
-			cachePoints.addElement(
-				new CachePoint("BinDir", new Point(42.69, -87.91)));
+			// In with the new
+			for(Enumeration e=v.elements(); e.hasMoreElements(); ) {
+				cachePoints.addElement(e.nextElement());
+			}
 		}
 	}
 
@@ -53,7 +79,7 @@ public class CachePointList extends Thread {
 	 */
 	public Enumeration getPoints() {
 		Enumeration e=null;
-		synchronized(cachePoints) {
+		synchronized(CACHE_MUTEX) {
 			e=cachePoints.elements();
 		}
 		return(e);
@@ -70,7 +96,7 @@ public class CachePointList extends Thread {
 	 */
 	public Enumeration getPoints(Point p, double max_distance) {
 		Vector v=new Vector();
-		synchronized(cachePoints) {
+		synchronized(CACHE_MUTEX) {
 			for(Enumeration e=cachePoints.elements(); e.hasMoreElements();) {
 				if(max_distance>0) {
 					CachePoint cp=(CachePoint)e.nextElement();

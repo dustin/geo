@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: GeoVector.java,v 1.2 2001/06/12 21:27:14 dustin Exp $
+// $Id: GeoVector.java,v 1.3 2001/06/13 03:45:32 dustin Exp $
 
 package net.spy.geo;
 
@@ -9,7 +9,7 @@ import java.text.NumberFormat;
 /**
  * Distance and bearing.
  */
-public class GeoVector extends Object {
+public class GeoVector extends Object implements java.io.Serializable {
 
 	private double distance=0d;
 	private double bearing=0d;

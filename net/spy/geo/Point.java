@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Point.java,v 1.4 2001/06/12 23:57:49 dustin Exp $
+// $Id: Point.java,v 1.5 2001/06/13 03:45:33 dustin Exp $
 
 package net.spy.geo;
 
@@ -15,7 +15,7 @@ import net.spy.geo.sp.*;
 /**
  * Represents a point on earth.
  */
-public class Point extends Object {
+public class Point extends Object implements java.io.Serializable {
 
 	private double longitude=0;
 	private double latitude=0;
