@@ -75,6 +75,9 @@
 			<lib dir="${libdir}">
 				<patternset refid="arch-stuff"/>
 			</lib>
+			<lib dir="${user.home}/lib/java/">
+				<include name="postgresql.jar"/>
+			</lib>
 			<classes dir="${builddir}" includes="**/*.class,**/*.properties">
 				<patternset refid="arch-stuff"/>
 			</classes>
