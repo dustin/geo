@@ -14,9 +14,7 @@
 			<include name="jsdk.jar"/>
 		</fileset>
 		<fileset dir="${libdir}">
-			<include name="spy.jar"/>
-			<include name="jwebkit.jar"/>
-			<include name="spyxmlrpc.jar"/>
+			<include name="*.jar"/>
 		</fileset>
 		<pathelement path="${user.home}/prog/java/servlet/png"/>
 		<pathelement
@@ -63,7 +61,13 @@
 		</javac>
 	</target>
 
-	<target name="war" depends="all">
+	<target name="validateconfigs">
+		<xmlvalidate failonerror="yes">
+			<fileset dir="etc" includes="**/*.xml"/>
+		</xmlvalidate>
+	</target>
+
+	<target name="war" depends="all,validateconfigs">
 		<war warfile="geo.war" webxml="etc/web.xml">
 			<webinf dir="etc/webinf">
 				<patternset refid="arch-stuff"/>

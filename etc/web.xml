@@ -8,6 +8,16 @@
 
 <web-app>
 
+	<servlet>
+		<servlet-name>rpc</servlet-name>
+		<servlet-class>net.spy.rpc.XMLRPC</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>rpc</servlet-name>
+		<url-pattern>/RPC2</url-pattern>
+	</servlet-mapping>
+
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
