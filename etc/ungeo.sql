@@ -1,0 +1,9 @@
+drop table geo_points;
+drop table geo_users;
+drop table geo_votes;
+drop table geo_log;
+drop sequence geo_points_point_id_seq;
+drop sequence geo_users_user_id_seq;
+drop sequence geo_votes_vote_id_seq;
+drop sequence geo_log_log_id_seq;
+drop sequence geo_point_namer;

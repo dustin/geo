@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: GeoBean.java,v 1.1 2001/06/13 03:45:29 dustin Exp $
+// $Id: GeoBean.java,v 1.2 2001/06/13 09:51:46 dustin Exp $
 
 package net.spy.geo;
 
@@ -13,6 +13,7 @@ public class GeoBean extends Object implements java.io.Serializable {
 	private String pass=null;
 
 	private GeoUser user=null;
+	private boolean authenticated=false;
 
 	/**
 	 * Get an instance of GeoBean.
@@ -36,7 +37,7 @@ public class GeoBean extends Object implements java.io.Serializable {
 	}
 
 	/**
-	 * Check the password.
+	 * Check the user's password.
 	 */
 	public void checkPassword() throws Exception {
 		if(username==null || pass==null) {
@@ -44,6 +45,22 @@ public class GeoBean extends Object implements java.io.Serializable {
 		}
 		user=new GeoUser(username);
 		user.checkPassword(pass);
+		authenticated=true;
+	}
+
+	/**
+	 * Have we been authenticated?
+	 */
+	public boolean isAuthenticated() throws Exception {
+		if(!authenticated) {
+			try {
+				checkPassword();
+			} catch(Exception e) {
+				System.err.println("Error verifying " + username);
+			}
+		}
+
+		return(authenticated);
 	}
 
 	/**

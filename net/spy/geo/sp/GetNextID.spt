@@ -1,0 +1,15 @@
+#
+# $Id
+#
+
+@package
+net.spy.geo.sp
+
+@description
+Get the next ID for building waypoint IDs.
+
+@sql
+select nextval('geo_point_namer') as id;
+
+@results
+id INTEGER Next ID.

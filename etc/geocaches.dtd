@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  * Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
+  * 
+  * $Id: geocaches.dtd,v 1.1 2001/06/13 09:51:43 dustin Exp $
+  -->
+
+<!ELEMENT geocaches (origin?,point*)>
+<!-- A point somewhere -->
+<!ELEMENT point (name,description,created,terrain,difficulty,creatorid,
+		longitude,latitude,waypoint,distance?,bearing?,direction?)>
+<!-- Describes the origin point, the point from which distances are
+	measured  -->
+<!ELEMENT origin (longitude,latitude)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT created (#PCDATA)>
+<!ELEMENT terrain (#PCDATA)>
+<!ELEMENT difficulty (#PCDATA)>
+<!ELEMENT creatorid (#PCDATA)>
+<!ELEMENT waypoint (#PCDATA)>
+<!ELEMENT distance (#PCDATA)>
+<!ELEMENT bearing (#PCDATA)>
+<!ELEMENT direction (#PCDATA)>

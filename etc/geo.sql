@@ -1,7 +1,7 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.3 2001/06/13 03:45:26 dustin Exp $
+-- $Id: geo.sql,v 1.4 2001/06/13 09:51:42 dustin Exp $
 --
 
 -- The actual users
@@ -22,6 +22,10 @@ create table geo_users (
 create unique index geo_users_byname on geo_users(username);
 grant all on geo_users to nobody;
 grant all on geo_users_user_id_seq to nobody;
+
+-- Sequence for giving points numbers
+create sequence geo_point_namer minvalue 1000;
+grant all on geo_point_namer to nobody;
 
 -- Points go here.
 create table geo_points (

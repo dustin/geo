@@ -9,4 +9,4 @@ net.spy.geo.sp
 Get all of the known points.
 
 @sql
-select city as name, longitude, latitude from zips where state='CA'
+select * from geo_points where retired=false

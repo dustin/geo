@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePointList.java,v 1.3 2001/06/13 03:45:27 dustin Exp $
+// $Id: CachePointList.java,v 1.4 2001/06/13 09:51:45 dustin Exp $
 
 package net.spy.geo;
 
@@ -18,12 +18,15 @@ public class CachePointList extends Thread implements java.io.Serializable {
 	private static String CACHE_MUTEX="CACHE_MUTEX";
 	private static Vector cachePoints=null;
 
+	private boolean done=false;
+
 	/**
 	 * Get an instance of CachePointList.
 	 */
 	public CachePointList() throws Exception {
 		super("CachePointList");
 		initPoints();
+		setDaemon(true);
 		start();
 	}
 
@@ -51,10 +54,17 @@ public class CachePointList extends Thread implements java.io.Serializable {
 			DBSP dbsp=new GetAllPoints(new GeoConfig());
 			ResultSet rs=dbsp.executeQuery();
 			while(rs.next()) {
-				v.addElement(
-					new CachePoint(rs.getString("name"),
-						new Point(rs.getDouble("longitude"),
-								  rs.getDouble("latitudE"))));
+				CachePoint cp=new CachePoint(rs.getString("name"),
+					new Point(rs.getDouble("longitude"),
+							  rs.getDouble("latitudE")));
+				cp.setCreatorId(rs.getInt("creator_id"));
+				cp.setDescription(rs.getString("description"));
+				cp.setWaypointId(rs.getString("waypoint_id"));
+				cp.setDifficulty(rs.getFloat("difficulty"));
+				cp.setTerrain(rs.getFloat("terrain"));
+				cp.setApproach(rs.getFloat("approach"));
+				cp.setDateCreated(rs.getTimestamp("created"));
+				v.addElement(cp);
 			}
 			rs.close();
 			dbsp.close();
@@ -72,6 +82,32 @@ public class CachePointList extends Thread implements java.io.Serializable {
 				cachePoints.addElement(e.nextElement());
 			}
 		}
+	}
+
+	/**
+	 * Keep going until it's time to stop.
+	 */
+	public void run() {
+		while(!done) {
+			try {
+				synchronized(CACHE_MUTEX) {
+					CACHE_MUTEX.wait(3600*1000);
+				}
+				// go ahead and do another check here.
+				if(!done) {
+					updatePoints();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Tell the thread to stop at its next convenience.
+	 */
+	public void finish() {
+		done=true;
 	}
 
 	/**
@@ -137,6 +173,15 @@ public class CachePointList extends Thread implements java.io.Serializable {
 		}
 
 		return(rv);
+	}
+
+	/**
+	 * Request an update of the point data.
+	 */
+	public void requestUpdate() {
+		synchronized(CACHE_MUTEX) {
+			CACHE_MUTEX.notifyAll();
+		}
 	}
 
 	/**
