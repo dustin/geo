@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: GeoDataServlet.java,v 1.1 2001/06/13 09:51:48 dustin Exp $
+// $Id: GeoDataServlet.java,v 1.2 2001/06/13 22:23:19 dustin Exp $
 
 package net.spy.geo;
 
@@ -33,10 +33,22 @@ public class GeoDataServlet extends HttpServlet {
 	public void init(ServletConfig conf) throws ServletException {
 		super.init(conf);
 		try {
+			log("Initializing CachePointList");
 			list=new CachePointList();
 		} catch(Exception e) {
 			throw new ServletException("Error making CachePointList", e);
 		}
+	}
+
+	/**
+	 * Tell the point list to close.
+	 */
+	public void destroy() {
+		log("Destroying CachePointList");
+		// Tell it we're done.
+		list.finish();
+		// This will cause it to jump out of its loop.
+		list.requestUpdate();
 	}
 
 	/**
@@ -62,9 +74,21 @@ public class GeoDataServlet extends HttpServlet {
 		throws ServletException, IOException {
 
 		String lon_s=req.getParameter("long");
+		if(lon_s != null && lon_s.length()==0) {
+			lon_s=null;
+		}
 		String lat_s=req.getParameter("lat");
+		if(lat_s != null && lat_s.length()==0) {
+			lat_s=null;
+		}
 		String max_s=req.getParameter("max");
+		if(max_s != null && max_s.length()==0) {
+			max_s=null;
+		}
 		String zip_s=req.getParameter("zip");
+		if(zip_s != null && zip_s.length()==0) {
+			zip_s=null;
+		}
 
 		Point p=null;
 
