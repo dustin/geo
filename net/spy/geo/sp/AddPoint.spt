@@ -18,8 +18,10 @@ insert into geo_points (
 		waypoint_id,
 		difficulty,
 		terrain,
-		approach
+		approach,
+		country
 	) values (
+		?,
 		?,
 		?,
 		?,
@@ -40,4 +42,5 @@ latitude required FLOAT latitude of the point
 waypoint_id required VARCHAR Waypoint ID
 difficulty required FLOAT Difficulty rating of the point
 terrain required FLOAT Terrain rating
-approach required FLOAT Recommended direction of approach
+approach required VARCHAR Recommended direction of approach
+country required INTEGER The country in which this cache lives

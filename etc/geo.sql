@@ -1,7 +1,7 @@
 --
 -- Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 --
--- $Id: geo.sql,v 1.4 2001/06/13 09:51:42 dustin Exp $
+-- $Id: geo.sql,v 1.5 2001/06/14 07:57:53 dustin Exp $
 --
 
 -- The actual users
@@ -23,6 +23,17 @@ create unique index geo_users_byname on geo_users(username);
 grant all on geo_users to nobody;
 grant all on geo_users_user_id_seq to nobody;
 
+-- The country list
+create table geo_countries (
+	id serial,
+	abbr char(2),
+	name varchar(64),
+	primary key(id)
+);
+grant all on geo_countries to nobody;
+grant all on geo_countries_id_seq to nobody;
+create unique index geo_countries_byabbr on geo_countries(abbr);
+
 -- Sequence for giving points numbers
 create sequence geo_point_namer minvalue 1000;
 grant all on geo_point_namer to nobody;
@@ -38,11 +49,13 @@ create table geo_points (
 	waypoint_id varchar(6) not null,
 	difficulty float default 1 not null,
 	terrain float default 1 not null,
-	approach float default -1,
+	country integer not null,
+	approach varchar,
 	retired boolean default false,
 	created timestamp default now(),
 	primary key(point_id),
-	foreign key(creator_id) references geo_users(user_id)
+	foreign key(creator_id) references geo_users(user_id),
+	foreign key(country) references geo_countries(id)
 );
 create unique index geo_points_bypid on geo_points(waypoint_id);
 grant all on geo_points to nobody;

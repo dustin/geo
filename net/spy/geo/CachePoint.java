@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePoint.java,v 1.3 2001/06/13 09:51:44 dustin Exp $
+// $Id: CachePoint.java,v 1.4 2001/06/14 07:57:57 dustin Exp $
 
 package net.spy.geo;
 
@@ -28,7 +28,8 @@ public class CachePoint extends Point {
 	private float difficulty=1;
 	private float terrain=1;
 	private Date dateCreated=null;
-	private float approach=-1;
+	private String approach=null;
+	private int country=-1;
 
 	/**
 	 * Get an instance of CachePoint.
@@ -64,9 +65,9 @@ public class CachePoint extends Point {
 		el.appendChild(d.createTextNode(description));
 		root.appendChild(el);
 
-		if(approach>=0)  {
+		if(approach!=null)  {
 			el=d.createElement("approach");
-			el.appendChild(d.createTextNode("" + approach));
+			el.appendChild(d.createTextNode(approach));
 			root.appendChild(el);
 		}
 
@@ -77,6 +78,14 @@ public class CachePoint extends Point {
 		el=d.createElement("latitude");
 		el.appendChild(d.createTextNode("" + getLatitude()));
 		root.appendChild(el);
+
+		try {
+			el=d.createElement("country");
+			el.appendChild(d.createTextNode(getCountry().getAbbr()));
+			root.appendChild(el);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		el=d.createElement("created");
 		el.appendChild(d.createTextNode(dateCreated.toString()));
@@ -214,18 +223,31 @@ public class CachePoint extends Point {
 	}
 
 	/**
-	 * Set the approach bearing (negative number means no approach
-	 * bearing).
+	 * Set the approach hint.
 	 */
-	public void setApproach(float approach) {
+	public void setApproach(String approach) {
 		this.approach=approach;
 	}
 
 	/**
-	 * Get the recommended angle of approach.
+	 * Get the approach hint.
 	 */
-	public float getApproach() {
+	public String getApproach() {
 		return(approach);
+	}
+
+	/**
+	 * Set the country (by number).
+	 */
+	public void setCountry(int country) {
+		this.country=country;
+	}
+
+	/**
+	 * Get the country.
+	 */
+	public Country getCountry() throws Exception {
+		return(new Country(country));
 	}
 
 	/**
@@ -248,9 +270,14 @@ public class CachePoint extends Point {
 		dbsp.set("difficulty", difficulty);
 		dbsp.set("terrain", terrain);
 		dbsp.set("approach", approach);
+		dbsp.set("country", country);
 
 		dbsp.executeUpdate();
 		dbsp.close();
+
+		// Let the cachepoint list know that we added one
+		CachePointList cpl=new CachePointList();
+		cpl.requestUpdate();
 	}
 
 	/**

@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: CachePointList.java,v 1.4 2001/06/13 09:51:45 dustin Exp $
+// $Id: CachePointList.java,v 1.5 2001/06/14 07:57:58 dustin Exp $
 
 package net.spy.geo;
 
@@ -56,13 +56,14 @@ public class CachePointList extends Thread implements java.io.Serializable {
 			while(rs.next()) {
 				CachePoint cp=new CachePoint(rs.getString("name"),
 					new Point(rs.getDouble("longitude"),
-							  rs.getDouble("latitudE")));
+							  rs.getDouble("latitude")));
 				cp.setCreatorId(rs.getInt("creator_id"));
 				cp.setDescription(rs.getString("description"));
 				cp.setWaypointId(rs.getString("waypoint_id"));
 				cp.setDifficulty(rs.getFloat("difficulty"));
 				cp.setTerrain(rs.getFloat("terrain"));
-				cp.setApproach(rs.getFloat("approach"));
+				cp.setApproach(rs.getString("approach"));
+				cp.setCountry(rs.getInt("country"));
 				cp.setDateCreated(rs.getTimestamp("created"));
 				v.addElement(cp);
 			}

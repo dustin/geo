@@ -1,10 +1,10 @@
 # Copyright (c) 2000  Dustin Sallings <dustin@spy.net>
-# $Id: Makefile,v 1.6 2001/06/13 09:51:41 dustin Exp $
+# $Id: Makefile,v 1.7 2001/06/14 07:57:51 dustin Exp $
 
 JAVAHOME=/usr
 JAR=$(JAVAHOME)/bin/jar
 # JAVAC=$(JAVAHOME)/bin/javac
-JAVAC=jikes
+JAVAC=jikes +P
 JAVA=$(JAVAHOME)/bin/java
 MYLIB=$(HOME)/lib/java
 
@@ -23,10 +23,14 @@ CLASSES=\
 		net/spy/geo/sp/LookupUserByID.class \
 		net/spy/geo/sp/AddPoint.class \
 		net/spy/geo/sp/GetNextID.class \
+		net/spy/geo/sp/GetCountryByAbbr.class \
+		net/spy/geo/sp/GetCountryByID.class \
+		net/spy/geo/sp/GetAllCountries.class \
 		net/spy/geo/GeoConfig.class \
 		net/spy/geo/Point.class \
 		net/spy/geo/PointComparator.class \
 		net/spy/geo/GeoVector.class \
+		net/spy/geo/Country.class \
 		net/spy/geo/CachePoint.class \
 		net/spy/geo/CachePointList.class \
 		net/spy/geo/GeoUser.class \
