@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: Point.java,v 1.6 2001/06/14 09:36:18 dustin Exp $
+// $Id: Point.java,v 1.7 2001/06/14 21:21:19 dustin Exp $
 
 package net.spy.geo;
 
@@ -23,7 +23,7 @@ public class Point extends Object implements java.io.Serializable {
 	/**
 	 * Get an instance of Point at the given longitude and latitude.
 	 */
-	public Point(double longitude, double latitude) {
+	public Point(double latitude, double longitude) {
 		super();
 		this.longitude=longitude;
 		this.latitude=latitude;
@@ -32,8 +32,8 @@ public class Point extends Object implements java.io.Serializable {
 	/**
 	 * Get an instance of Point at the given longitude and latitude.
 	 */
-	public Point(double longitude, double long_minutes,
-			double latitude, double lat_minutes) {
+	public Point(double latitude, double lat_minutes,
+			double longitude, double long_minutes) {
 		super();
 		this.longitude=fromhms(longitude, long_minutes);
 		this.latitude=fromhms(latitude, lat_minutes);
@@ -58,9 +58,16 @@ public class Point extends Object implements java.io.Serializable {
 		}
 		double lon=rs.getDouble("longitude");
 		double lat=rs.getDouble("latitude");
+		// XXX:  Backwards compatibility since those were backwards
+		if(lat<0) {
+			System.err.println("Using backwards compatibility!!!");
+			double t=lon;
+			lon=lat;
+			lat=t;
+		}
 		rs.close();
 		dbsp.close();
-		return(new Point(lon, lat));
+		return(new Point(lat, lon));
 	}
 
 	private double fromhms(double whole, double minutes) {
@@ -88,17 +95,17 @@ public class Point extends Object implements java.io.Serializable {
 		nf.setMaximumFractionDigits(4);
 
 		StringBuffer sb=new StringBuffer();
-		sb.append(Math.abs(getLongDegrees()));
-		sb.append(" ");
-		sb.append(nf.format(getLongMinutes()));
-		sb.append("'");
-		sb.append(getLongHemisphere());
-		sb.append(" ");
 		sb.append(Math.abs(getLatDegrees()));
 		sb.append(" ");
 		sb.append(nf.format(getLatMinutes()));
 		sb.append("'");
 		sb.append(getLatHemisphere());
+		sb.append(" ");
+		sb.append(Math.abs(getLongDegrees()));
+		sb.append(" ");
+		sb.append(nf.format(getLongMinutes()));
+		sb.append("'");
+		sb.append(getLongHemisphere());
 		return(sb.toString());
 	}
 
@@ -117,10 +124,10 @@ public class Point extends Object implements java.io.Serializable {
 	}
 
 	/**
-	 * Get the longitude hemisphere (N or S).
+	 * Get the longitude hemisphere (W or E).
 	 */
 	public String getLongHemisphere() {
-		return(longitude<0 ? "S" : "N");
+		return(longitude<0 ? "W" : "E");
 	}
 
 	/**
@@ -138,10 +145,10 @@ public class Point extends Object implements java.io.Serializable {
 	}
 
 	/**
-	 * Get the latitude hemisphere (W or E).
+	 * Get the latitude hemisphere (S or N).
 	 */
 	public String getLatHemisphere() {
-		return(latitude<0 ? "W" : "E");
+		return(latitude<0 ? "S" : "N");
 	}
 
 	/**
@@ -149,11 +156,11 @@ public class Point extends Object implements java.io.Serializable {
 	 */
 	public String toDecimalString() {
 		StringBuffer sb=new StringBuffer();
-		sb.append(Math.abs(longitude));
-		sb.append(getLongHemisphere());
-		sb.append(" ");
 		sb.append(Math.abs(latitude));
 		sb.append(getLatHemisphere());
+		sb.append(" ");
+		sb.append(Math.abs(longitude));
+		sb.append(getLongHemisphere());
 		return(sb.toString());
 	}
 
@@ -206,8 +213,8 @@ public class Point extends Object implements java.io.Serializable {
 		double long_b=p.getLongitude();
 		double lat_b=p.getLatitude();
 
-		double cosaob=(cos(long_a)*cos(long_b)
-			*cos(lat_b-lat_a)) + (sin(long_a)*sin(long_b));
+		double cosaob=(cos(lat_a)*cos(lat_b)
+			*cos(long_b-long_a)) + (sin(lat_a)*sin(lat_b));
 
 		double aob=Math.acos(cosaob);
 		
@@ -215,8 +222,8 @@ public class Point extends Object implements java.io.Serializable {
 		double distance=aob*3959;
 
 		// Get the bearing
-		double a=lat_a-lat_b;
-		double b=long_a-long_b;
+		double a=long_a-long_b;
+		double b=lat_a-lat_b;
 
 		// Find the bearing angle
 		double bearing=Math.toDegrees(Math.atan(a/b));
@@ -226,13 +233,13 @@ public class Point extends Object implements java.io.Serializable {
 		while(bearing>90) { bearing-=90; }
 
 		// HACK!  Now calculate the quadrant
-		if(lat_a>lat_b) {
+		if(long_a>long_b) {
 			bearing+=180;
-			if(long_a<long_b) {
+			if(lat_a<lat_b) {
 				bearing+=90;
 			}
 		} else {
-			if(long_a>long_b) {
+			if(lat_a>lat_b) {
 				bearing+=90;
 			}
 		}
@@ -252,7 +259,7 @@ public class Point extends Object implements java.io.Serializable {
 		System.out.println("Home point is " + home);
 
 		for(int i=0; i<args.length; i++) {
-			Point p=Point.getPointByZip(Integer.parseInt(args[0]));
+			Point p=Point.getPointByZip(Integer.parseInt(args[i]));
 			System.out.println("Arg point is " + p);
 			System.out.println("Difference:  " + home.diff(p));
 			v.addElement(p);

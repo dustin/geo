@@ -9,7 +9,9 @@ net.spy.geo.sp
 Get point data by zip code.
 
 @sql
-select latitude, longitude from zips where zipcode = ?
+select
+		latitude, longitude
+	from zips where zipcode = ?
 
 @params
 zipcode required INTEGER The zipcode for which we want the coordinates

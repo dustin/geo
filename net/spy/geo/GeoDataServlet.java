@@ -1,6 +1,6 @@
 // Copyright (c) 2001  Dustin Sallings <dustin@spy.net>
 //
-// $Id: GeoDataServlet.java,v 1.3 2001/06/14 10:17:37 dustin Exp $
+// $Id: GeoDataServlet.java,v 1.4 2001/06/14 21:21:18 dustin Exp $
 
 package net.spy.geo;
 
@@ -95,7 +95,7 @@ public class GeoDataServlet extends HttpServlet {
 		if(lon_s != null && lat_s != null) {
 			float lon=Float.parseFloat(lon_s);
 			float lat=Float.parseFloat(lat_s);
-			p=new Point(lon, lat);
+			p=new Point(lat, lon);
 		} else if(zip_s!=null) {
 			try {
 				p=Point.getPointByZip(Integer.parseInt(zip_s));
@@ -127,14 +127,14 @@ public class GeoDataServlet extends HttpServlet {
 	}
 
 	// Send out the XML.
-	private void xmlList(OutputStream os, Point p, Enumeration en)
+	private void xmlList(ServletOutputStream os, Point p, Enumeration en)
 		throws Exception {
 
-		os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
+		os.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
-		os.write(("<!DOCTYPE geocaches SYSTEM \"" +DTD+ "\">\n\n").getBytes());
+		os.println(("<!DOCTYPE geocaches SYSTEM \"" +DTD+ "\">\n"));
 
-		os.write("<geocaches>\n\n".getBytes());
+		os.println("<geocaches>\n");
 
 		if(p!=null) {
 			Document d=new DocumentImpl();
@@ -174,7 +174,7 @@ public class GeoDataServlet extends HttpServlet {
 
 		}
 
-		os.write("\n</geocaches>\n".getBytes());
+		os.println("\n</geocaches>");
 	}
 
 	private void sendDoc(OutputStream os, Document d) throws Exception {
