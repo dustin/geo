@@ -11,7 +11,7 @@ Get point data by zip code.
 @sql
 select
 		latitude, longitude
-	from zips.zips where zipcode = ?
+	from zips.zipcodes where zipcode = ?
 
 @params
 zipcode required INTEGER The zipcode for which we want the coordinates
