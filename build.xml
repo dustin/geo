@@ -39,6 +39,13 @@
 		</javac>
 	</target>
 
+	<target name="geo.jar" depends="all">
+		<jar jarfile="geo.jar">
+			<include name="**/*.class"/>
+			<include name="**/*.properties"/>
+		</jar>
+	</target>
+
 	<target name="spgen">
 		<spgen srcdir="${SRCDIR}" destdir="${BUILDDIR}"/>
 	</target>
