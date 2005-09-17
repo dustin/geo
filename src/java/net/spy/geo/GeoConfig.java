@@ -5,9 +5,12 @@
 package net.spy.geo;
 
 import java.io.File;
+
 import net.spy.util.SpyConfig;
 
 public class GeoConfig extends SpyConfig {
+	
+	private static GeoConfig instance=null;
 
 	private static File configs[]={
 		new File("/afs/spy.net/misc/web/etc/geo.conf"),
@@ -18,9 +21,16 @@ public class GeoConfig extends SpyConfig {
 	/**
 	 * Get a new GeoConfig.
 	 */
-	public GeoConfig() {
+	private GeoConfig() {
 		super();
 		loadConfig(configs);
+	}
+
+	public static synchronized GeoConfig getInstance() {
+		if(instance == null) {
+			instance=new GeoConfig();
+		}
+		return(instance);
 	}
 
 }

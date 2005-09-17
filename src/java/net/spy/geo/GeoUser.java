@@ -4,13 +4,14 @@
 
 package net.spy.geo;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.ResultSet;
 import java.util.Date;
 
-import net.spy.util.*;
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.LookupUserByID;
+import net.spy.geo.sp.LookupUserByName;
+import net.spy.geo.sp.RegisterUser;
+import net.spy.util.Digest;
 
 /**
  * The User.
@@ -42,13 +43,13 @@ public class GeoUser extends Object implements java.io.Serializable {
 	/**
 	 * Get a User by username.
 	 */
-	public GeoUser(String username) throws Exception {
+	public GeoUser(String user) throws Exception {
 		super();
-		DBSP dbsp=new LookupUserByName(new GeoConfig());
-		dbsp.set("username", username);
+		DBSP dbsp=new LookupUserByName(GeoConfig.getInstance());
+		dbsp.set("username", user);
 		ResultSet rs=dbsp.executeQuery();
 		if(!rs.next()) {
-			throw new Exception("No such user:  " + username);
+			throw new Exception("No such user:  " + user);
 		}
 		initFromResultSet(rs);
 		rs.close();
@@ -60,7 +61,7 @@ public class GeoUser extends Object implements java.io.Serializable {
 	 */
 	public GeoUser(int uid) throws Exception {
 		super();
-		DBSP dbsp=new LookupUserByID(new GeoConfig());
+		DBSP dbsp=new LookupUserByID(GeoConfig.getInstance());
 		dbsp.set("user_id", uid);
 		ResultSet rs=dbsp.executeQuery();
 		if(!rs.next()) {
@@ -92,7 +93,7 @@ public class GeoUser extends Object implements java.io.Serializable {
 		DBSP dbsp=null;
 
 		if(isNew) {
-			dbsp=new RegisterUser(new GeoConfig());
+			dbsp=new RegisterUser(GeoConfig.getInstance());
 		} else {
 			throw new Exception("Update not implemented yet.");
 		}
@@ -128,8 +129,8 @@ public class GeoUser extends Object implements java.io.Serializable {
 		return(username);
 	}
 
-	public void setUsername(String username) {
-		this.username=username;
+	public void setUsername(String to) {
+		this.username=to;
 	}
 
 	public void checkPassword(String against) throws Exception {
@@ -139,77 +140,69 @@ public class GeoUser extends Object implements java.io.Serializable {
 		}
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(String to) {
 		Digest d=new Digest();
-		this.password=d.getHash(password);;
+		this.password=d.getHash(to);;
 	}
 
 	public String getFullName() {
 		return(fullName);
 	}
 
-	public void setFullName(String fullName) {
-		this.fullName=fullName;
+	public void setFullName(String to) {
+		this.fullName=to;
 	}
 
 	public String getEmail() {
 		return(email);
 	}
 
-	public void setEmail(String email) {
-		this.email=email;
+	public void setEmail(String to) {
+		this.email=to;
 	}
 
 	public String getUrl() {
 		return(url);
 	}
 
-	public void setUrl(String url) {
-		this.url=url;
+	public void setUrl(String to) {
+		this.url=to;
 	}
 
 	public boolean getActive() {
 		return(active);
 	}
 
-	public void setActive(boolean active) {
-		this.active=active;
+	public void setActive(boolean to) {
+		this.active=to;
 	}
 
 	public int getZipcode() {
 		return(zipcode);
 	}
 
-	public void setZipcode(int zipcode) {
-		this.zipcode=zipcode;
+	public void setZipcode(int to) {
+		this.zipcode=to;
 	}
 
 	public float getLongitude() {
 		return(longitude);
 	}
 
-	public void setLongitude(float longitude) {
-		this.longitude=longitude;
+	public void setLongitude(float to) {
+		this.longitude=to;
 	}
 
 	public float getLatitude() {
 		return(latitude);
 	}
 
-	public void setLatitude(float latitude) {
-		this.latitude=latitude;
+	public void setLatitude(float to) {
+		this.latitude=to;
 	}
 
 	public Date getTimestamp() {
 		return(timestamp);
-	}
-
-	/**
-	 * Testing and what not.
-	 */
-	public static void main(String args[]) throws Exception {
-		GeoUser gu=new GeoUser(args[0]);
-		System.out.println(gu);
 	}
 
 }

@@ -4,11 +4,14 @@
 
 package net.spy.geo;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.ResultSet;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.GetAllCountries;
+import net.spy.geo.sp.GetCountryByAbbr;
+import net.spy.geo.sp.GetCountryByID;
 
 /**
  * Represents a country.
@@ -22,13 +25,13 @@ public class Country extends Object {
 	/**
 	 * Get an instance of Country.
 	 */
-	public Country(int id) throws Exception {
+	public Country(int cid) throws Exception {
 		super();
-		DBSP dbsp=new GetCountryByID(new GeoConfig());
-		dbsp.set("id", id);
+		DBSP dbsp=new GetCountryByID(GeoConfig.getInstance());
+		dbsp.set("id", cid);
 		ResultSet rs=dbsp.executeQuery();
 		if(!rs.next()) {
-			throw new Exception("No such country:  " + id);
+			throw new Exception("No such country:  " + cid);
 		}
 		initFromResultSet(rs);
 		rs.close();
@@ -38,13 +41,13 @@ public class Country extends Object {
 	/**
 	 * Get an instance of Country.
 	 */
-	public Country(String abbr) throws Exception {
+	public Country(String abbrev) throws Exception {
 		super();
-		DBSP dbsp=new GetCountryByAbbr(new GeoConfig());
-		dbsp.set("abbr", abbr);
+		DBSP dbsp=new GetCountryByAbbr(GeoConfig.getInstance());
+		dbsp.set("abbr", abbrev);
 		ResultSet rs=dbsp.executeQuery();
 		if(!rs.next()) {
-			throw new Exception("No such country:  " + abbr);
+			throw new Exception("No such country:  " + abbrev);
 		}
 		initFromResultSet(rs);
 		rs.close();
@@ -67,7 +70,7 @@ public class Country extends Object {
 	 * Get a list of Country objects.
 	 */
 	public static Enumeration listCountries() throws Exception {
-		DBSP dbsp=new GetAllCountries(new GeoConfig());
+		DBSP dbsp=new GetAllCountries(GeoConfig.getInstance());
 		Vector v=new Vector();
 		ResultSet rs=dbsp.executeQuery();
 		while(rs.next()) {

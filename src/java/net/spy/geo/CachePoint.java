@@ -4,16 +4,16 @@
 
 package net.spy.geo;
 
-import java.util.*;
+import java.sql.ResultSet;
 import java.util.Date;
-import java.sql.*;
 
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-// Some XML stuff
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.AddPoint;
+import net.spy.geo.sp.GetCachePointByID;
+import net.spy.geo.sp.GetNextID;
 
 /**
  * A Geocache point.
@@ -34,9 +34,9 @@ public class CachePoint extends Point {
 	/**
 	 * Get an instance of CachePoint.
 	 */
-	public CachePoint(String name, Point p) {
+	public CachePoint(String n, Point p) {
 		super();
-		this.name=name;
+		this.name=n;
 		setLongitude(p.getLongitude());
 		setLatitude(p.getLatitude());
 	}
@@ -46,7 +46,7 @@ public class CachePoint extends Point {
 	 */
 	public CachePoint(int id) throws Exception {
 		super();
-		DBSP dbsp=new GetCachePointByID(new GeoConfig());
+		DBSP dbsp=new GetCachePointByID(GeoConfig.getInstance());
 		dbsp.set("id", id);
 		ResultSet rs=dbsp.executeQuery();
 		if(!rs.next()) {
@@ -149,8 +149,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the point ID.
 	 */
-	protected void setPointId(int pointId) {
-		this.pointId=pointId;
+	protected void setPointId(int id) {
+		this.pointId=id;
 	}
 
 	/**
@@ -163,8 +163,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the name of this CachePoint.
 	 */
-	public void setName(String name) {
-		this.name=name;
+	public void setName(String n) {
+		this.name=n;
 	}
 
 	/**
@@ -184,15 +184,15 @@ public class CachePoint extends Point {
 	/**
 	 * Set the description of this CachePoint.
 	 */
-	public void setDescription(String description) {
-		this.description=description;
+	public void setDescription(String d) {
+		this.description=d;
 	}
 
 	/**
 	 * Set the creator ID.
 	 */
-	public void setCreatorId(int creatorId) {
-		this.creatorId=creatorId;
+	public void setCreatorId(int id) {
+		this.creatorId=id;
 	}
 
 	/**
@@ -205,8 +205,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the waypoint ID.
 	 */
-	public void setWaypointId(String waypointId) {
-		this.waypointId=waypointId;
+	public void setWaypointId(String to) {
+		this.waypointId=to;
 	}
 
 	/**
@@ -219,8 +219,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the difficulty level.
 	 */
-	public void setDifficulty(float difficulty) {
-		this.difficulty=difficulty;
+	public void setDifficulty(float to) {
+		this.difficulty=to;
 	}
 
 	/**
@@ -233,8 +233,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the terrain level.
 	 */
-	public void setTerrain(float terrain) {
-		this.terrain=terrain;
+	public void setTerrain(float to) {
+		this.terrain=to;
 	}
 
 	/**
@@ -247,8 +247,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the date this record was created.
 	 */
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated=dateCreated;
+	public void setDateCreated(Date to) {
+		this.dateCreated=to;
 	}
 
 	/**
@@ -261,8 +261,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the approach hint.
 	 */
-	public void setApproach(String approach) {
-		this.approach=approach;
+	public void setApproach(String to) {
+		this.approach=to;
 	}
 
 	/**
@@ -275,8 +275,8 @@ public class CachePoint extends Point {
 	/**
 	 * Set the country (by number).
 	 */
-	public void setCountry(int country) {
-		this.country=country;
+	public void setCountry(int to) {
+		this.country=to;
 	}
 
 	/**
@@ -290,12 +290,12 @@ public class CachePoint extends Point {
 	 * Save this new point.
 	 */
 	public void save() throws Exception {
-		DBSP keyget=new GetNextID(new GeoConfig());
+		DBSP keyget=new GetNextID(GeoConfig.getInstance());
 		ResultSet rs=keyget.executeQuery();
 		rs.next();
 		int wid=rs.getInt("id");
 		keyget.close();
-		DBSP dbsp=new AddPoint(new GeoConfig());
+		DBSP dbsp=new AddPoint(GeoConfig.getInstance());
 
 		dbsp.set("creator_id", creatorId);
 		dbsp.set("name", name);
@@ -314,15 +314,6 @@ public class CachePoint extends Point {
 		// Let the cachepoint list know that we added one
 		CachePointList cpl=new CachePointList();
 		cpl.requestUpdate();
-	}
-
-	/**
-	 * Testing and what not.
-	 */
-	public static void main(String args[]) throws Exception {
-		CachePoint cp=new CachePoint(Integer.parseInt(args[0]));
-
-		System.out.println(cp);
 	}
 
 }

@@ -4,11 +4,14 @@
 
 package net.spy.geo.services;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Vector;
 
+import net.spy.geo.DBPolygon;
+import net.spy.geo.Point;
+import net.spy.geo.Polygon;
 import net.spy.rpc.services.Remote;
-
-import net.spy.geo.*;
 
 /**
  * XML RPC services for geography data.
@@ -28,15 +31,14 @@ public class Geo extends Remote {
 	public Vector getPointInfo(double lat, double lon) throws Exception {
 
 		Point p=new Point(lat, lon);
-		Enumeration polys=Polygon.getAreasForPoint(p);
+		Collection<DBPolygon> polys=Polygon.getAreasForPoint(p);
 
-		if(!polys.hasMoreElements()) {
+		if(polys.size() == 0) {
 			throw new Exception("No information found for that point.");
 		}
 
 		Vector rv=new Vector();
-		for(; polys.hasMoreElements(); ) {
-			DBPolygon poly=(DBPolygon)polys.nextElement();
+		for(DBPolygon poly : polys) {
 			Point center=poly.getCenter();
 
 			Double height=new Double(poly.getHeight());
@@ -85,16 +87,6 @@ public class Geo extends Remote {
 		}
 
 		return(rv);
-	}
-
-	/**
-	 * Testing and what not.
-	 */
-	public static void main(String args[]) throws Exception {
-		Geo geo=new Geo();
-		System.out.println(geo.getPointInfo(
-			Double.parseDouble(args[0]),
-			Double.parseDouble(args[1])));
 	}
 
 }

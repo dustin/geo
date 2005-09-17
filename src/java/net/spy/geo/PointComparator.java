@@ -4,7 +4,7 @@
 
 package net.spy.geo;
 
-import java.util.*;
+import java.util.Comparator;
 
 /**
  * Order Points by distance from a common point.
@@ -17,9 +17,9 @@ public class PointComparator extends Object
 	/**
 	 * Get an instance of PointComparator.
 	 */
-	public PointComparator(Point commonPoint) {
+	public PointComparator(Point p) {
 		super();
-		this.commonPoint=commonPoint;
+		this.commonPoint=p;
 	}
 
 	/**

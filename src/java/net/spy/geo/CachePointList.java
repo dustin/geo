@@ -4,11 +4,13 @@
 
 package net.spy.geo;
 
-import java.util.*;
-import java.sql.*;
+import java.sql.ResultSet;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.GetAllPoints;
 
 /**
  * This object maintains the list of points.
@@ -51,7 +53,7 @@ public class CachePointList extends Thread implements java.io.Serializable {
 	private void updatePoints() {
 		Vector v=new Vector();
 		try {
-			DBSP dbsp=new GetAllPoints(new GeoConfig());
+			DBSP dbsp=new GetAllPoints(GeoConfig.getInstance());
 			ResultSet rs=dbsp.executeQuery();
 			while(rs.next()) {
 				v.addElement(new CachePoint(rs.getInt("point_id")));
@@ -172,34 +174,6 @@ public class CachePointList extends Thread implements java.io.Serializable {
 		synchronized(CACHE_MUTEX) {
 			CACHE_MUTEX.notifyAll();
 		}
-	}
-
-	/**
-	 * Testing and what not.
-	 */
-	public static void main(String args[]) throws Exception {
-		CachePointList cpl=new CachePointList();
-		System.out.println(cpl);
-		Point home=new Point(37, 22.110, -121, 59.164);
-
-		System.out.println("Unordered:\n");
-		for(Enumeration e=cpl.getPoints(); e.hasMoreElements(); ) {
-			CachePoint cp=(CachePoint)e.nextElement();
-			System.out.println(cp + " - " + home.diff(cp));
-		}
-
-		System.out.println("\nOrdered:\n");
-		for(Enumeration e=cpl.getPoints(home); e.hasMoreElements(); ) {
-			CachePoint cp=(CachePoint)e.nextElement();
-			System.out.println(cp + " - " + home.diff(cp));
-		}
-
-		System.out.println("\nOrdered, max 100 miles:\n");
-		for(Enumeration e=cpl.getPoints(home, 100d); e.hasMoreElements(); ) {
-			CachePoint cp=(CachePoint)e.nextElement();
-			System.out.println(cp + " - " + home.diff(cp));
-		}
-
 	}
 
 }

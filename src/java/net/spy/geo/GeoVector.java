@@ -17,10 +17,10 @@ public class GeoVector extends Object implements java.io.Serializable {
 	/**
 	 * Get an instance of GeoVector.
 	 */
-	public GeoVector(double distance, double bearing) {
+	public GeoVector(double d, double b) {
 		super();
-		this.distance=distance;
-		this.bearing=bearing;
+		this.distance=d;
+		this.bearing=b;
 	}
 
 	/**
@@ -43,8 +43,7 @@ public class GeoVector extends Object implements java.io.Serializable {
 			};
 		String rv=null;
 
-		double d=11.25;
-		for(int i=0; (double)i*22.5<bearing; i++) {
+		for(int i=0; i*22.5<bearing; i++) {
 			rv=directions[i];
 		}
 		return(rv);

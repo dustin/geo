@@ -4,13 +4,11 @@
 
 package net.spy.geo;
 
-import java.math.*;
-import java.sql.*;
-import java.util.*;
+import java.sql.ResultSet;
 import java.text.NumberFormat;
 
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.GetPointByZip;
 
 /**
  * Represents a point on earth.
@@ -23,20 +21,20 @@ public class Point extends Object implements java.io.Serializable {
 	/**
 	 * Get an instance of Point at the given longitude and latitude.
 	 */
-	public Point(double latitude, double longitude) {
+	public Point(double lat, double lon) {
 		super();
-		this.longitude=longitude;
-		this.latitude=latitude;
+		this.longitude=lon;
+		this.latitude=lat;
 	}
 
 	/**
 	 * Get an instance of Point at the given longitude and latitude.
 	 */
-	public Point(double latitude, double lat_minutes,
-			double longitude, double long_minutes) {
+	public Point(double lat, double lat_minutes,
+			double lon, double long_minutes) {
 		super();
-		this.longitude=fromhms(longitude, long_minutes);
-		this.latitude=fromhms(latitude, lat_minutes);
+		this.longitude=fromhms(lon, long_minutes);
+		this.latitude=fromhms(lat, lat_minutes);
 	}
 
 	/**
@@ -50,7 +48,7 @@ public class Point extends Object implements java.io.Serializable {
 	 * Get a Point for the given zipcode.
 	 */
 	public static Point getPointByZip(int zipcode) throws Exception {
-		DBSP dbsp=new GetPointByZip(new GeoConfig());
+		DBSP dbsp=new GetPointByZip(GeoConfig.getInstance());
 		dbsp.set("zipcode", zipcode);
 		ResultSet rs=dbsp.executeQuery();
 		if(!rs.next()) {
@@ -174,20 +172,19 @@ public class Point extends Object implements java.io.Serializable {
 	/**
 	 * Set the longitude.
 	 */
-	protected void setLongitude(double longitude) {
-		this.longitude=longitude;
+	protected void setLongitude(double to) {
+		this.longitude=to;
 	}
 
 	/**
 	 * Set the latitude.
 	 */
-	protected void setLatitude(double latitude) {
-		this.latitude=latitude;
+	protected void setLatitude(double to) {
+		this.latitude=to;
 	}
 
 	// Degree sin.
 	private double sin(double a) {
-		double rv=Math.sin(Math.toRadians(a));
 		return(Math.sin(Math.toRadians(a)));
 	}
 
@@ -240,36 +237,4 @@ public class Point extends Object implements java.io.Serializable {
 		return(new GeoVector(distance, bearing));
 	}
 
-	/**
-	 * Testing and what not.
-	 */
-	public static void main(String args[]) throws Exception {
-		// Home
-		Vector v=new Vector();
-
-		Point home=new Point(37, 22.110, -121, 59.164);
-
-		System.out.println("Home point is " + home);
-
-		Point other=new Point(Double.parseDouble(args[0]),
-			Double.parseDouble(args[1]));
-
-		System.out.println("Point is " + other);
-
-		/*
-		for(int i=0; i<args.length; i++) {
-			Point p=Point.getPointByZip(Integer.parseInt(args[i]));
-			System.out.println("Arg point is " + p);
-			System.out.println("Difference:  " + home.diff(p));
-			v.addElement(p);
-		}
-		System.out.println("Sorting...");
-		PointComparator pcompare=new PointComparator(home);
-		Collections.sort(v, pcompare);
-		for(Enumeration e=v.elements(); e.hasMoreElements(); ) {
-			Point p=(Point)e.nextElement();
-			System.out.println(p + " -- " + home.diff(p));
-		}
-		*/
-	}
 }

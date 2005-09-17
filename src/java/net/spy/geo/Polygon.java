@@ -4,25 +4,26 @@
 
 package net.spy.geo;
 
-import java.util.*;
-import java.sql.*;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.GetPossibleAreas;
 
 /**
  * A closed set of points.
  */
-public class Polygon extends Vector {
+public class Polygon extends ArrayList<Point> {
 
 	private String name=null;
 
 	/**
 	 * Get an instance of Polygon.
 	 */
-	public Polygon(String name) {
+	public Polygon(String n) {
 		super();
-		this.name=name;
+		this.name=n;
 	}
 
 	/**
@@ -33,39 +34,35 @@ public class Polygon extends Vector {
 	}
 
 	/**
-	 * Ask for an Enumeration of DBPolygons containing the given Point.
+	 * Get a collection of DBPolygons containing the given Point.
 	 */
-	public static Enumeration getAreasForPoint(Point p) throws Exception {
-		Vector rv=new Vector();
-		DBSP dbsp=new GetPossibleAreas(new GeoConfig());
+	public static Collection<DBPolygon> getAreasForPoint(Point p) throws Exception {
+		Collection<DBPolygon> rv=new ArrayList<DBPolygon>();
+		DBSP dbsp=new GetPossibleAreas(GeoConfig.getInstance());
 		dbsp.set("latitude", (float)p.getLatitude());
 		dbsp.set("longitude", (float)p.getLongitude());
 		ResultSet rs=dbsp.executeQuery();
-		Vector v=new Vector();
+		ArrayList<Integer> a=new ArrayList<Integer>();
 		while(rs.next()) {
-			v.addElement(new Integer(rs.getInt("id")));
+			a.add(new Integer(rs.getInt("id")));
 		}
 		rs.close();
 		dbsp.close();
 
-		for(Enumeration e=v.elements(); e.hasMoreElements(); ) {
-			Integer io=(Integer)e.nextElement();
-			int i=io.intValue();
-
+		for(int i : a) {
 			DBPolygon poly=new DBPolygon(i);
 			if(poly.containsPoint(p)) {
-				rv.addElement(poly);
+				rv.add(poly);
 			}
 		}
 
-		return(rv.elements());
+		return(rv);
 	}
 
 	/**
 	 * A string of this polygon.
 	 */
 	public String toString() {
-		// return(name + " has " + size() + " points:  " + super.toString());
 		return(name + " has " + size() + " points.");
 	}
 
@@ -77,9 +74,9 @@ public class Polygon extends Vector {
 		Point p1=null, p2=null;
 		int n=size();
 
-		p1=(Point)elementAt(i);
+		p1=get(i);
 		for(i=1; i<=n; i++) {
-			p2=(Point)elementAt(i%n); // Mod so size()+1 == 0
+			p2=get(i%n); // Mod so size()+1 == 0
 			// Convenience variables.
 			double y1=p1.getLatitude();
 			double x1=p1.getLongitude();
@@ -116,26 +113,8 @@ public class Polygon extends Vector {
 	/**
 	 * Set the name of this polygon.
 	 */
-	protected void setName(String name) {
-		this.name=name;
-	}
-
-	public static void main(String args[]) throws Exception {
-		Point p=new Point(Double.parseDouble(args[0]),
-			Double.parseDouble(args[1]));
-
-		Enumeration polys=getAreasForPoint(p);
-		if(polys.hasMoreElements()) {
-			for(; polys.hasMoreElements(); ) {
-				DBPolygon poly=(DBPolygon)polys.nextElement();
-				System.out.println("Point is in " + poly.getName());
-				System.out.println("Center point is " + poly.getCenter());
-				System.out.println("Width is " + poly.getWidth());
-				System.out.println("Height is " + poly.getHeight());
-			}
-		} else {
-			System.out.println("No matching area.");
-		}
+	protected void setName(String to) {
+		this.name=to;
 	}
 
 }

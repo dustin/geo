@@ -4,12 +4,14 @@
 
 package net.spy.geo;
 
-import java.util.*;
+import java.sql.ResultSet;
 import java.util.Date;
-import java.sql.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.GetLogEntries;
+import net.spy.geo.sp.SaveLogEntry;
 
 /**
  * A log entry.
@@ -54,7 +56,7 @@ public class LogEntry extends Object {
 		throws Exception {
 
 		Vector v=new Vector();
-		DBSP dbsp=new GetLogEntries(new GeoConfig());
+		DBSP dbsp=new GetLogEntries(GeoConfig.getInstance());
 		dbsp.set("point_id", point_id);
 		ResultSet rs=dbsp.executeQuery();
 		while(rs.next()) {
@@ -86,20 +88,20 @@ public class LogEntry extends Object {
 		return(info);
 	}
 
-	public void setUserId(int userId) {
-		this.userId=userId;
+	public void setUserId(int to) {
+		this.userId=to;
 	}
 
-	public void setFound(boolean found) {
-		this.found=found;
+	public void setFound(boolean to) {
+		this.found=to;
 	}
 
-	public void setInfo(String info) {
-		this.info=info;
+	public void setInfo(String to) {
+		this.info=to;
 	}
 
-	public void setPointId(int pointId) {
-		this.pointId=pointId;
+	public void setPointId(int to) {
+		this.pointId=to;
 	}
 
 	public Date getTimestamp() {
@@ -107,7 +109,7 @@ public class LogEntry extends Object {
 	}
 
 	public void save() throws Exception {
-		DBSP dbsp=new SaveLogEntry(new GeoConfig());
+		DBSP dbsp=new SaveLogEntry(GeoConfig.getInstance());
 		dbsp.set("point_id", pointId);
 		dbsp.set("user_id", userId);
 		dbsp.set("found", found);

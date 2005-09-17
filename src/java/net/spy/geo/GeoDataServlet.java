@@ -4,17 +4,23 @@
 
 package net.spy.geo;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.Enumeration;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.xml.sax.*;
-import org.w3c.dom.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.*;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A servlet for geo data.

@@ -4,13 +4,15 @@
 
 package net.spy.geo.services;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import net.spy.util.SpyConfig;
 import net.spy.db.SpyCacheDB;
-
 import net.spy.rpc.services.Remote;
+import net.spy.util.SpyConfig;
 
 /**
  * Get zipcode information.
@@ -150,19 +152,6 @@ public class ZipCode extends Remote {
 		db.close();
 
 		return(rv);
-	}
-
-	/**
-	 * Testing and what not.
-	 */
-	public static void main(String args[]) throws Exception {
-		ZipCode zc=new ZipCode();
-		Hashtable h=new Hashtable();
-		for(int i=0; i<args.length; i+=2) {
-			h.put(args[i], args[i+1]);
-		}
-
-		System.out.println(zc.lookupZips(h));
 	}
 
 }

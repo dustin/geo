@@ -4,10 +4,11 @@
 
 package net.spy.geo;
 
-import java.sql.*;
+import java.sql.ResultSet;
 
-import net.spy.db.*;
-import net.spy.geo.sp.*;
+import net.spy.db.DBSP;
+import net.spy.geo.sp.GetPolygonByID;
+import net.spy.geo.sp.GetPolygonDataByID;
 
 /**
  * A polygon that came from the DB (has a bit more info).
@@ -25,7 +26,7 @@ public class DBPolygon extends Polygon {
 	 */
 	public DBPolygon(int id) throws Exception {
 		super();
-		DBSP dbsp=new GetPolygonByID(new GeoConfig());
+		DBSP dbsp=new GetPolygonByID(GeoConfig.getInstance());
 		dbsp.set("id", id);
 		ResultSet rs=dbsp.executeQuery();
 		if(!rs.next()) {
@@ -34,20 +35,20 @@ public class DBPolygon extends Polygon {
 		setName(rs.getString("name"));
 		source=rs.getString("source");
 		boundary1=new Point(
-			(double)rs.getFloat("boundaryy1"),
-			(double)rs.getFloat("boundaryx1"));
+			rs.getFloat("boundaryy1"),
+			rs.getFloat("boundaryx1"));
 		boundary2=new Point(
-			(double)rs.getFloat("boundaryy2"),
-			(double)rs.getFloat("boundaryx2"));
+			rs.getFloat("boundaryy2"),
+			rs.getFloat("boundaryx2"));
 		rs.close();
 		dbsp.close();
 
-		dbsp=new GetPolygonDataByID(new GeoConfig());
+		dbsp=new GetPolygonDataByID(GeoConfig.getInstance());
 		dbsp.set("id", id);
 		rs=dbsp.executeQuery();
 
 		while(rs.next()) {
-			addElement(new Point(
+			add(new Point(
 				rs.getFloat("latitude"), rs.getFloat("longitude") ));
 		}
 	}
