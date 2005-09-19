@@ -14,6 +14,8 @@ import net.spy.db.SpyCacheDB;
 import net.spy.rpc.services.Remote;
 import net.spy.util.SpyConfig;
 
+import net.spy.geo.GeoConfig;
+
 /**
  * Get zipcode information.
  */
@@ -24,11 +26,6 @@ public class ZipCode extends Remote {
 	 */
 	public ZipCode() {
 		super();
-	}
-
-	private static SpyConfig getConf() {
-		return(new SpyConfig(
-			new java.io.File("/afs/spy.net/misc/web/etc/zip.conf")));
 	}
 
 	private Hashtable getZipData(ResultSet rs) throws Exception {
@@ -49,7 +46,7 @@ public class ZipCode extends Remote {
 	public Hashtable lookupZip(int zipcode) throws Exception {
 		Hashtable h=null;
 
-		SpyCacheDB db=new SpyCacheDB(getConf());
+		SpyCacheDB db=new SpyCacheDB(GeoConfig.getInstance());
 		PreparedStatement pst=db.prepareStatement(
 			"select * from zips.zipcode_view where zipcode=?", 900);
 		pst.setInt(1, zipcode);
@@ -132,7 +129,7 @@ public class ZipCode extends Remote {
 
 		query.append(" limit 250");
 
-		SpyCacheDB db=new SpyCacheDB(getConf());
+		SpyCacheDB db=new SpyCacheDB(GeoConfig.getInstance());
 		PreparedStatement pst=db.prepareStatement(query.toString(), 900);
 
 		for(int i=0; i<keys.size(); i++) {
