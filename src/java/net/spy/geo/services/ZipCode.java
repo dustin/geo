@@ -48,7 +48,7 @@ public class ZipCode extends Remote {
 
 		SpyCacheDB db=new SpyCacheDB(GeoConfig.getInstance());
 		PreparedStatement pst=db.prepareStatement(
-			"select * from zips.zipcode_view where zipcode=?", 900);
+			"select * from geo.zipcode_view where zipcode=?", 900);
 		pst.setInt(1, zipcode);
 		ResultSet rs=pst.executeQuery();
 
@@ -107,7 +107,7 @@ public class ZipCode extends Remote {
 		}
 
 		StringBuffer query=new StringBuffer();
-		query.append("select * from zips.zipcode_view ");
+		query.append("select * from geo.zipcode_view ");
 
 		if(keys.size() > 0) {
 			query.append("where ");
