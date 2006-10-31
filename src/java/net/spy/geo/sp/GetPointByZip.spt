@@ -15,6 +15,3 @@ zipcode required INTEGER The zipcode for which we want the coordinates
 @results
 latitude DOUBLE The latitude
 longitude DOUBLE The longitude
-
-@cachetime
-900

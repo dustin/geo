@@ -9,11 +9,6 @@ import static java.lang.Math.min;
 
 import java.sql.ResultSet;
 
-import net.spy.db.DBSPLike;
-import net.spy.geo.sp.GetPolygonByID;
-import net.spy.geo.sp.GetPolygonDataByID;
-import net.spy.util.CloseUtil;
-
 /**
  * A polygon that came from the DB (has a bit more info).
  */
@@ -28,40 +23,16 @@ public class DBPolygon extends Polygon {
 	/**
 	 * Get an instance of DBPolygon.
 	 */
-	public DBPolygon(int id) throws Exception {
+	public DBPolygon(ResultSet rs) throws Exception {
 		super();
-		GetPolygonByID db=new GetPolygonByID(GeoConfig.getInstance());
-		try {
-			db.setId(id);
-			ResultSet rs=db.executeQuery();
-			if(!rs.next()) {
-				throw new Exception("No such polygon.");
-			}
-			setName(rs.getString("name"));
-			source=rs.getString("source");
-			boundary1=new Point(
-					rs.getFloat("boundaryy1"),
-					rs.getFloat("boundaryx1"));
-			boundary2=new Point(
-					rs.getFloat("boundaryy2"),
-					rs.getFloat("boundaryx2"));
-			rs.close();
-		} finally {
-			CloseUtil.close((DBSPLike)db);
-		}
-
-		GetPolygonDataByID db2=new GetPolygonDataByID(GeoConfig.getInstance());
-		try {
-			db2.set("id", id);
-			ResultSet rs=db2.executeQuery();
-
-			while(rs.next()) {
-				add(new Point(
-						rs.getFloat("latitude"), rs.getFloat("longitude") ));
-			}
-		} finally {
-			CloseUtil.close((DBSPLike)db2);
-		}
+		setName(rs.getString("name"));
+		source=rs.getString("source");
+		boundary1=new Point(
+				rs.getFloat("boundaryy1"),
+				rs.getFloat("boundaryx1"));
+		boundary2=new Point(
+				rs.getFloat("boundaryy2"),
+				rs.getFloat("boundaryx2"));
 
 		if(source.startsWith("zt")) {
 			setType(Type.zipcode);

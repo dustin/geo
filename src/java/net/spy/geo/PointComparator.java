@@ -4,13 +4,14 @@
 
 package net.spy.geo;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Order Points by distance from a common point.
  */
 public class PointComparator extends Object
-	implements Comparator<Point>, java.io.Serializable {
+	implements Comparator<Point>, Serializable {
 
 	private Point commonPoint=null;
 

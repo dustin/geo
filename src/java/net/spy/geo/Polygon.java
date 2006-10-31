@@ -48,6 +48,8 @@ public class Polygon extends ArrayList<Point> {
 	 */
 	public static Collection<DBPolygon> getAreasForPoint(Point p)
 		throws Exception {
+
+		// Find the potential matches.
 		Collection<DBPolygon> rv=new ArrayList<DBPolygon>();
 		ArrayList<Integer> a=new ArrayList<Integer>();
 		GetPossibleAreas db=new GetPossibleAreas(GeoConfig.getInstance());
@@ -63,8 +65,10 @@ public class Polygon extends ArrayList<Point> {
 			CloseUtil.close((DBSPLike)db);
 		}
 
+		// Filter out all of the polygons that don't contain the given point
+		PolygonFactory pf=PolygonFactory.getInstance();
 		for(int i : a) {
-			DBPolygon poly=new DBPolygon(i);
+			DBPolygon poly=pf.getPolygon(i);
 			if(poly.containsPoint(p)) {
 				rv.add(poly);
 			}

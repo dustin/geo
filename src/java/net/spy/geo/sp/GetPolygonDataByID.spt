@@ -19,6 +19,3 @@ seq
 poly_id
 latitude
 longitude
-
-@cachetime
-300
