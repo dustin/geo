@@ -4,12 +4,8 @@
 
 package net.spy.geo;
 
-import java.sql.ResultSet;
 import java.text.NumberFormat;
 
-import net.spy.db.DBSPLike;
-import net.spy.geo.sp.GetPointByZip;
-import net.spy.util.CloseUtil;
 
 /**
  * Represents a point on earth.
@@ -43,28 +39,6 @@ public class Point extends Object implements java.io.Serializable {
 	 */
 	protected Point() {
 		super();
-	}
-
-	/**
-	 * Get a Point for the given zipcode.
-	 */
-	public static Point getPointByZip(int zipcode) throws Exception {
-		GetPointByZip db=new GetPointByZip(GeoConfig.getInstance());
-		double lon=0;
-		double lat=0;
-		try {
-			db.setZipcode(zipcode);
-			ResultSet rs=db.executeQuery();
-			if(!rs.next()) {
-				throw new Exception("Zipcode not found:  " + zipcode);
-			}
-			lon=rs.getDouble("longitude");
-			lat=rs.getDouble("latitude");
-			rs.close();
-		} finally {
-			CloseUtil.close((DBSPLike)db);
-		}
-		return(new Point(lat, lon));
 	}
 
 	private double fromhms(double whole, double minutes) {

@@ -10,7 +10,7 @@ import java.util.Vector;
 
 import net.spy.geo.DBPolygon;
 import net.spy.geo.Point;
-import net.spy.geo.Polygon;
+import net.spy.geo.PolygonFactory;
 import net.spy.rpc.services.Remote;
 
 /**
@@ -32,7 +32,8 @@ public class Geo extends Remote {
 	public Vector getPointInfo(double lat, double lon) throws Exception {
 
 		Point p=new Point(lat, lon);
-		Collection<DBPolygon> polys=Polygon.getAreasForPoint(p);
+		PolygonFactory pf=PolygonFactory.getInstance();
+		Collection<DBPolygon> polys=pf.getAreasForPoint(p);
 
 		if(polys.isEmpty()) {
 			throw new Exception("No information found for that point.");

@@ -4,13 +4,8 @@
 
 package net.spy.geo;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Collection;
 
-import net.spy.db.DBSPLike;
-import net.spy.geo.sp.GetPossibleAreas;
-import net.spy.util.CloseUtil;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -41,40 +36,6 @@ public class Polygon extends ArrayList<Point> {
 	 */
 	protected Polygon() {
 		super();
-	}
-
-	/**
-	 * Get a collection of DBPolygons containing the given Point.
-	 */
-	public static Collection<DBPolygon> getAreasForPoint(Point p)
-		throws Exception {
-
-		// Find the potential matches.
-		Collection<DBPolygon> rv=new ArrayList<DBPolygon>();
-		ArrayList<Integer> a=new ArrayList<Integer>();
-		GetPossibleAreas db=new GetPossibleAreas(GeoConfig.getInstance());
-		try {
-			db.setLatitude((float)p.getLatitude());
-			db.setLongitude((float)p.getLongitude());
-			ResultSet rs=db.executeQuery();
-			while(rs.next()) {
-				a.add(new Integer(rs.getInt("id")));
-			}
-			rs.close();
-		} finally {
-			CloseUtil.close((DBSPLike)db);
-		}
-
-		// Filter out all of the polygons that don't contain the given point
-		PolygonFactory pf=PolygonFactory.getInstance();
-		for(int i : a) {
-			DBPolygon poly=pf.getPolygon(i);
-			if(poly.containsPoint(p)) {
-				rv.add(poly);
-			}
-		}
-
-		return(rv);
 	}
 
 	/**
