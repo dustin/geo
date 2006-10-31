@@ -1,7 +1,5 @@
 <%@ page errorPage="error.jsp" %>
 
-<jsp:useBean id="geo" scope="session" class="net.spy.geo.GeoBean"/>
-
 <!--
   Copyright (c) 2001  Dustin Sallings <dustin+html@spy.net>
   -->

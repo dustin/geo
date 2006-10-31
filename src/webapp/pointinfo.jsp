@@ -4,8 +4,6 @@
 <%@ page import="net.spy.geo.*" %>
 <%-- <%@ page errorPage="error.jsp" %> --%>
 
-<jsp:useBean id="geo" scope="session" class="net.spy.geo.GeoBean"/>
-
 <%
 	String long_sign=request.getParameter("longsign");
 	float lon=Float.parseFloat(request.getParameter("longitude"));
@@ -22,7 +20,7 @@
 	}
 
 	Point p=new Point(lat, lat_min, lon, lon_min);
-	Enumeration polys=Polygon.getAreasForPoint(p);
+	Collection<DBPolygon> polys=Polygon.getAreasForPoint(p);
 
 	NumberFormat nf=NumberFormat.getInstance();
 	nf.setMaximumFractionDigits(4);
@@ -34,13 +32,8 @@
 
 <h1>Info for <%= p %></h1>
 
-<% if(!polys.hasMoreElements()) { %>
-	There is no matching polygon for this point.
-<% } else { %>
-
 <%
-	for(; polys.hasMoreElements(); ) {
-		DBPolygon poly=(DBPolygon)polys.nextElement();
+	for(DBPolygon poly : polys) {
 		Point center=poly.getCenter();
 
 // http://tiger.census.gov/cgi-bin/mapsurfer?infact=2&outfact=2&act=move&on=counties&on=miscell&on=shorelin&on=states&on=water&tlevel=-&tvar=-&tmeth=i&mlat=36.99894&mlon=-109.04461&msym=grnpin&mlabel=Your+Spot&murl=&lat=36.99894&lon=-109.04461&wid=6.000&ht=6.000&conf=palette2.con
@@ -79,32 +72,8 @@
 </center>
 
 <%
-		} // poly loop
-	}     // have polys
+	} // polys
 %>
-
-<h2>Nearest Known Waypoint</h2>
-
-<%
-	CachePointList cpl=new CachePointList();
-	Enumeration e=cpl.getPoints(p);
-	CachePoint cp=null;
-	if(e.hasMoreElements()) {
-		cp=(CachePoint)e.nextElement();
-	}
-	while(e.hasMoreElements()) { e.nextElement(); }
-%>
-
-<% if(cp==null) { %>
-	No known waypoint nearby.
-<% } else { %>
-	<% GeoVector gv=p.diff(cp); %>
-	Nearest known waypoint is
-	<a href="showpoint.jsp?point=<%= cp.getPointId() %>"><%=
-		cp.getName() %></a>,
-	which is <%= nf.format(gv.getDistance()) %> miles
-	<%= gv.getDirection() %> of the point of interest.
-<% } %>
 
 <%@ include file="tail.jsp" %>
 
