@@ -4,19 +4,21 @@
 
 package net.spy.geo;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.util.Date;
 
-import net.spy.db.DBSP;
+import net.spy.db.DBSPLike;
 import net.spy.geo.sp.LookupUserByID;
 import net.spy.geo.sp.LookupUserByName;
 import net.spy.geo.sp.RegisterUser;
+import net.spy.util.CloseUtil;
 import net.spy.util.Digest;
 
 /**
  * The User.
  */
-public class GeoUser extends Object implements java.io.Serializable {
+public class GeoUser extends Object implements Serializable {
 
 	private int userid=-1;
 	private String username=null;
@@ -45,15 +47,18 @@ public class GeoUser extends Object implements java.io.Serializable {
 	 */
 	public GeoUser(String user) throws Exception {
 		super();
-		DBSP dbsp=new LookupUserByName(GeoConfig.getInstance());
-		dbsp.set("username", user);
-		ResultSet rs=dbsp.executeQuery();
-		if(!rs.next()) {
-			throw new Exception("No such user:  " + user);
+		LookupUserByName db=new LookupUserByName(GeoConfig.getInstance());
+		try {
+			db.setUsername(user);
+			ResultSet rs=db.executeQuery();
+			if(!rs.next()) {
+				throw new Exception("No such user:  " + user);
+			}
+			initFromResultSet(rs);
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		initFromResultSet(rs);
-		rs.close();
-		dbsp.close();
 	}
 
 	/**
@@ -61,15 +66,18 @@ public class GeoUser extends Object implements java.io.Serializable {
 	 */
 	public GeoUser(int uid) throws Exception {
 		super();
-		DBSP dbsp=new LookupUserByID(GeoConfig.getInstance());
-		dbsp.set("user_id", uid);
-		ResultSet rs=dbsp.executeQuery();
-		if(!rs.next()) {
-			throw new Exception("No such user:  " + uid);
+		LookupUserByID db=new LookupUserByID(GeoConfig.getInstance());
+		try {
+			db.setUserId(uid);
+			ResultSet rs=db.executeQuery();
+			if(!rs.next()) {
+				throw new Exception("No such user:  " + uid);
+			}
+			initFromResultSet(rs);
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		initFromResultSet(rs);
-		rs.close();
-		dbsp.close();
 	}
 
 	private void initFromResultSet(ResultSet rs) throws Exception {
@@ -90,7 +98,7 @@ public class GeoUser extends Object implements java.io.Serializable {
 	 * Save the user.
 	 */
 	public void save() throws Exception {
-		DBSP dbsp=null;
+		RegisterUser dbsp=null;
 
 		if(isNew) {
 			dbsp=new RegisterUser(GeoConfig.getInstance());
@@ -98,14 +106,14 @@ public class GeoUser extends Object implements java.io.Serializable {
 			throw new Exception("Update not implemented yet.");
 		}
 
-		dbsp.set("username", username);
-		dbsp.set("password", password);
-		dbsp.set("full_name", fullName);
-		dbsp.set("email", email);
-		dbsp.set("url", url);
-		dbsp.set("zipcode", zipcode);
-		dbsp.set("longitude", longitude);
-		dbsp.set("latitude", latitude);
+		dbsp.setUsername(username);
+		dbsp.setPassword(password);
+		dbsp.setFullName(fullName);
+		dbsp.setEmail(email);
+		dbsp.setUrl(url);
+		dbsp.setZipcode(zipcode);
+		dbsp.setLongitude(longitude);
+		dbsp.setLatitude(latitude);
 
 		dbsp.executeUpdate();
 		dbsp.close();
@@ -142,7 +150,7 @@ public class GeoUser extends Object implements java.io.Serializable {
 
 	public void setPassword(String to) {
 		Digest d=new Digest();
-		this.password=d.getHash(to);;
+		this.password=d.getHash(to);
 	}
 
 	public String getFullName() {

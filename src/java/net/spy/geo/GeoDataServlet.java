@@ -6,8 +6,8 @@ package net.spy.geo;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -122,14 +122,14 @@ public class GeoDataServlet extends HttpServlet {
 			}
 		}
 
-		Enumeration e=null;
+		Collection<CachePoint> c=null;
 		if(max_s!=null && p!=null) {
-			e=list.getPoints(p, Double.parseDouble(max_s));
+			c=list.getPoints(p, Double.parseDouble(max_s));
 		} else {
 			if(p!=null) {
-				e=list.getPoints(p);
+				c=list.getPoints(p);
 			} else {
-				e=list.getPoints();
+				c=list.getPoints();
 			}
 		}
 
@@ -138,10 +138,10 @@ public class GeoDataServlet extends HttpServlet {
 			res.setContentType("text/plain");
 			switch(format) {
 				case FORMAT_XML:
-					xmlList(os, p, e);
+					xmlList(os, p, c);
 					break;
 				case FORMAT_TAB:
-					tabList(os, p, e);
+					tabList(os, p, c);
 					break;
 			}
 		} catch(Exception ex) {
@@ -151,7 +151,8 @@ public class GeoDataServlet extends HttpServlet {
 	}
 
 	// Send out the XML.
-	private void xmlList(ServletOutputStream os, Point p, Enumeration en)
+	private void xmlList(ServletOutputStream os, Point p,
+			Collection<CachePoint> c)
 		throws Exception {
 
 		os.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -176,8 +177,7 @@ public class GeoDataServlet extends HttpServlet {
 			sendDoc(os, d);
 		}
 
-		for(; en.hasMoreElements(); ) {
-			CachePoint cp=(CachePoint)en.nextElement();
+		for(CachePoint cp : c) {
 			Document d=new DocumentImpl();
 
 			Element e=cp.appendXML(d);
@@ -202,7 +202,8 @@ public class GeoDataServlet extends HttpServlet {
 	}
 
 	// Tab delimited version
-	private void tabList(ServletOutputStream os, Point p, Enumeration en)
+	private void tabList(ServletOutputStream os, Point p,
+			Collection<CachePoint> c)
 		throws Exception {
 
 		os.println("# Tab delimited point list, generated on " + new Date());
@@ -217,14 +218,13 @@ public class GeoDataServlet extends HttpServlet {
 		os.println("# lat and long are decimal with negative being south ");
 		os.println("# and west respectively ");
 
-		for(; en.hasMoreElements(); ) {
-			CachePoint cp=(CachePoint)en.nextElement();
+		for(CachePoint cp : c) {
 			os.print(cp.getLatitude());
 			os.print("\t" + cp.getLongitude());
 			os.print("\t" + cp.getName());
 			os.print("\t" + cp.getDateCreated());
 			os.print(
-				"\thttp://bleu.west.spy.net/~dustin/geo/showpoint.jsp?point="
+				"\thttp://bleu.west.spy.net/geo/showpoint.jsp?point="
 				+ cp.getPointId());
 			if(p!=null) {
 				GeoVector gv=p.diff(cp);

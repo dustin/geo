@@ -11,9 +11,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.spy.db.DBSP;
+import net.spy.db.DBSPLike;
 import net.spy.geo.sp.AddPoint;
 import net.spy.geo.sp.GetCachePointByID;
 import net.spy.geo.sp.GetNextID;
+import net.spy.util.CloseUtil;
 
 /**
  * A Geocache point.
@@ -46,15 +48,18 @@ public class CachePoint extends Point {
 	 */
 	public CachePoint(int id) throws Exception {
 		super();
-		DBSP dbsp=new GetCachePointByID(GeoConfig.getInstance());
-		dbsp.set("id", id);
-		ResultSet rs=dbsp.executeQuery();
-		if(!rs.next()) {
-			throw new Exception("No such ID:  " + id);
+		GetCachePointByID db=new GetCachePointByID(GeoConfig.getInstance());
+		try {
+			db.setId(id);
+			ResultSet rs=db.executeQuery();
+			if(!rs.next()) {
+				throw new Exception("No such ID:  " + id);
+			}
+			initFromResultSet(rs);
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		initFromResultSet(rs);
-		rs.close();
-		dbsp.close();
 	}
 
 	private void initFromResultSet(ResultSet rs) throws Exception {
@@ -295,18 +300,18 @@ public class CachePoint extends Point {
 		rs.next();
 		int wid=rs.getInt("id");
 		keyget.close();
-		DBSP dbsp=new AddPoint(GeoConfig.getInstance());
+		AddPoint dbsp=new AddPoint(GeoConfig.getInstance());
 
-		dbsp.set("creator_id", creatorId);
-		dbsp.set("name", name);
-		dbsp.set("description", description);
-		dbsp.set("longitude", (float)getLongitude());
-		dbsp.set("latitude", (float)getLatitude());
-		dbsp.set("waypoint_id", "C" + wid);
-		dbsp.set("difficulty", difficulty);
-		dbsp.set("terrain", terrain);
-		dbsp.set("approach", approach);
-		dbsp.set("country", country);
+		dbsp.setCreatorId(creatorId);
+		dbsp.setName(name);
+		dbsp.setDescription(description);
+		dbsp.setLongitude((float)getLongitude());
+		dbsp.setLatitude((float)getLatitude());
+		dbsp.setWaypointId("C" + wid);
+		dbsp.setDifficulty(difficulty);
+		dbsp.setTerrain(terrain);
+		dbsp.setApproach(approach);
+		dbsp.setCountry(country);
 
 		dbsp.executeUpdate();
 		dbsp.close();

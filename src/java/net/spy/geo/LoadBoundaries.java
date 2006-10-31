@@ -11,7 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.spy.db.SpyDB;
 
@@ -20,7 +21,7 @@ import net.spy.db.SpyDB;
  */
 public class LoadBoundaries extends Object {
 
-	private Vector attributes=null;
+	private List<String> attributes=null;
 	private BufferedReader polySource=null;
 
 	/**
@@ -34,7 +35,7 @@ public class LoadBoundaries extends Object {
 	}
 
 	private void loadAttributes(File af) throws Exception {
-		attributes=new Vector();
+		attributes=new ArrayList<String>();
 		BufferedReader r=new BufferedReader(new FileReader(af));
 
 		String buf=r.readLine();
@@ -49,7 +50,7 @@ public class LoadBoundaries extends Object {
 			name=name.substring(1, name.length()-1);
 
 			buf=r.readLine();
-			attributes.addElement(name);
+			attributes.add(name);
 		}
 	}
 
@@ -78,7 +79,7 @@ public class LoadBoundaries extends Object {
 		if(part_id<0) {
 			name="HOLE";
 		} else {
-			name=(String)attributes.elementAt(part_id);
+			name=attributes.get(part_id);
 		}
 
 		Polygon poly=new Polygon(name);

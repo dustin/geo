@@ -10,7 +10,7 @@ import java.util.Comparator;
  * Order Points by distance from a common point.
  */
 public class PointComparator extends Object
-	implements Comparator, java.io.Serializable {
+	implements Comparator<Point>, java.io.Serializable {
 
 	private Point commonPoint=null;
 
@@ -25,9 +25,7 @@ public class PointComparator extends Object
 	/**
 	 * Compare two Point objects against our common point.
 	 */
-	public int compare(Object o1, Object o2) {
-		Point p1=(Point)o1;
-		Point p2=(Point)o2;
+	public int compare(Point p1, Point p2) {
 
 		GeoVector gv1=commonPoint.diff(p1);
 		GeoVector gv2=commonPoint.diff(p2);

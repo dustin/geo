@@ -4,10 +4,12 @@
 
 package net.spy.geo;
 
+import java.io.Serializable;
+
 /**
  * The bean.
  */
-public class GeoBean extends Object implements java.io.Serializable {
+public class GeoBean extends Object implements Serializable {
 
 	private String username=null;
 	private String pass=null;

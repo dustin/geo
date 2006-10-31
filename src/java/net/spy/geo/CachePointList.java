@@ -5,20 +5,22 @@
 package net.spy.geo;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
+import net.spy.SpyThread;
 import net.spy.db.DBSP;
 import net.spy.geo.sp.GetAllPoints;
 
 /**
  * This object maintains the list of points.
  */
-public class CachePointList extends Thread implements java.io.Serializable {
+public class CachePointList extends SpyThread implements java.io.Serializable {
 
 	private static String CACHE_MUTEX="CACHE_MUTEX";
-	private static Vector cachePoints=null;
+	private static Collection<CachePoint> cachePoints=null;
 
 	private boolean done=false;
 
@@ -42,7 +44,7 @@ public class CachePointList extends Thread implements java.io.Serializable {
 	private void initPoints() throws Exception {
 		synchronized(CACHE_MUTEX) {
 			if(cachePoints==null) {
-				cachePoints=new Vector();
+				cachePoints=new ArrayList<CachePoint>();
 				updatePoints();
 				start();
 			}
@@ -51,28 +53,22 @@ public class CachePointList extends Thread implements java.io.Serializable {
 
 	// Get new points periodically.
 	private void updatePoints() {
-		Vector v=new Vector();
+		Collection<CachePoint> v=new ArrayList<CachePoint>();
 		try {
 			DBSP dbsp=new GetAllPoints(GeoConfig.getInstance());
 			ResultSet rs=dbsp.executeQuery();
 			while(rs.next()) {
-				v.addElement(new CachePoint(rs.getInt("point_id")));
+				v.add(new CachePoint(rs.getInt("point_id")));
 			}
 			rs.close();
 			dbsp.close();
 		} catch(Exception e) {
-			System.err.println("Error getting points");
-			e.printStackTrace();
+			getLogger().info("Error getting points", e);
 		}
 
 		// Now that we've found them all, put them in
 		synchronized(CACHE_MUTEX) {
-			// Out with the old
-			cachePoints.removeAllElements();
-			// In with the new
-			for(Enumeration e=v.elements(); e.hasMoreElements(); ) {
-				cachePoints.addElement(e.nextElement());
-			}
+			cachePoints=v;
 		}
 	}
 
@@ -105,12 +101,10 @@ public class CachePointList extends Thread implements java.io.Serializable {
 	/**
 	 * Get an unsorted list of cache points.
 	 */
-	public Enumeration getPoints() {
-		Enumeration e=null;
+	public Collection<CachePoint> getPoints() {
 		synchronized(CACHE_MUTEX) {
-			e=cachePoints.elements();
+			return cachePoints;
 		}
-		return(e);
 	}
 
 	/**
@@ -120,27 +114,25 @@ public class CachePointList extends Thread implements java.io.Serializable {
 	 * @param p the point of origin we want to compare distances from
 	 * @param max_distance the maximum distance in miles we care about
 	 *
-	 * @return an Enumeration of CachePoint objects
+	 * @return a collection of CachePoint objects
 	 */
-	public Enumeration getPoints(Point p, double max_distance) {
-		Vector v=new Vector();
+	public Collection<CachePoint> getPoints(Point p, double max_distance) {
+		List<CachePoint> v=new ArrayList<CachePoint>();
 		synchronized(CACHE_MUTEX) {
-			for(Enumeration e=cachePoints.elements(); e.hasMoreElements();) {
-				if(max_distance>0) {
-					CachePoint cp=(CachePoint)e.nextElement();
+			if(max_distance > 0) {
+				for(CachePoint cp : cachePoints) {
 					GeoVector gv=p.diff(cp);
 					if(gv.getDistance() <= max_distance) {
-						v.addElement(cp);
+						v.add(cp);
 					}
-				} else {
-					// Always add if the max_distance is <=0
-					v.addElement(e.nextElement());
 				}
+			} else {
+				v.addAll(cachePoints);
 			}
 		}
 		PointComparator pcompare=new PointComparator(p);
 		Collections.sort(v, pcompare);
-		return(v.elements());
+		return v;
 	}
 
 	/**
@@ -148,9 +140,9 @@ public class CachePointList extends Thread implements java.io.Serializable {
 	 *
 	 * @param p the point of origin we want to compare distances from
 	 *
-	 * @return an Enumeration of CachePoint objects
+	 * @return a Collection of CachePoint objects
 	 */
-	public Enumeration getPoints(Point p) {
+	public Collection<CachePoint> getPoints(Point p) {
 		return(getPoints(p, -1.0d));
 	}
 

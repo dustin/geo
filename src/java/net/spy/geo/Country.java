@@ -5,13 +5,15 @@
 package net.spy.geo;
 
 import java.sql.ResultSet;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import net.spy.db.DBSP;
+import net.spy.db.DBSPLike;
 import net.spy.geo.sp.GetAllCountries;
 import net.spy.geo.sp.GetCountryByAbbr;
 import net.spy.geo.sp.GetCountryByID;
+import net.spy.util.CloseUtil;
 
 /**
  * Represents a country.
@@ -27,15 +29,18 @@ public class Country extends Object {
 	 */
 	public Country(int cid) throws Exception {
 		super();
-		DBSP dbsp=new GetCountryByID(GeoConfig.getInstance());
-		dbsp.set("id", cid);
-		ResultSet rs=dbsp.executeQuery();
-		if(!rs.next()) {
-			throw new Exception("No such country:  " + cid);
+		GetCountryByID db=new GetCountryByID(GeoConfig.getInstance());
+		try {
+			db.setId(cid);
+			ResultSet rs=db.executeQuery();
+			if(!rs.next()) {
+				throw new Exception("No such country:  " + cid);
+			}
+			initFromResultSet(rs);
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		initFromResultSet(rs);
-		rs.close();
-		dbsp.close();
 	}
 
 	/**
@@ -43,15 +48,18 @@ public class Country extends Object {
 	 */
 	public Country(String abbrev) throws Exception {
 		super();
-		DBSP dbsp=new GetCountryByAbbr(GeoConfig.getInstance());
-		dbsp.set("abbr", abbrev);
-		ResultSet rs=dbsp.executeQuery();
-		if(!rs.next()) {
-			throw new Exception("No such country:  " + abbrev);
+		GetCountryByAbbr db=new GetCountryByAbbr(GeoConfig.getInstance());
+		try {
+			db.setAbbr(abbrev);
+			ResultSet rs=db.executeQuery();
+			if(!rs.next()) {
+				throw new Exception("No such country:  " + abbrev);
+			}
+			initFromResultSet(rs);
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		initFromResultSet(rs);
-		rs.close();
-		dbsp.close();
 	}
 
 	// List all countries.
@@ -69,17 +77,19 @@ public class Country extends Object {
 	/**
 	 * Get a list of Country objects.
 	 */
-	public static Enumeration listCountries() throws Exception {
-		DBSP dbsp=new GetAllCountries(GeoConfig.getInstance());
-		Vector v=new Vector();
-		ResultSet rs=dbsp.executeQuery();
-		while(rs.next()) {
-			v.addElement(new Country(rs));
+	public static Collection<Country> listCountries() throws Exception {
+		DBSP db=new GetAllCountries(GeoConfig.getInstance());
+		Collection<Country> rv=new ArrayList<Country>();
+		try {
+			ResultSet rs=db.executeQuery();
+			while(rs.next()) {
+				rv.add(new Country(rs));
+			}
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		rs.close();
-		dbsp.close();
-
-		return(v.elements());
+		return rv;
 	}
 
 	/**

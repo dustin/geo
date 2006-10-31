@@ -5,13 +5,14 @@
 package net.spy.geo;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
 
-import net.spy.db.DBSP;
+import net.spy.db.DBSPLike;
 import net.spy.geo.sp.GetLogEntries;
 import net.spy.geo.sp.SaveLogEntry;
+import net.spy.util.CloseUtil;
 
 /**
  * A log entry.
@@ -52,20 +53,23 @@ public class LogEntry extends Object {
 	/**
 	 * Get an Enumeration of log entries for a point ID.
 	 */
-	public static Enumeration getEntriesForPoint(int point_id)
+	public static Collection<LogEntry> getEntriesForPoint(int point_id)
 		throws Exception {
 
-		Vector v=new Vector();
-		DBSP dbsp=new GetLogEntries(GeoConfig.getInstance());
-		dbsp.set("point_id", point_id);
-		ResultSet rs=dbsp.executeQuery();
-		while(rs.next()) {
-			v.addElement(new LogEntry(rs));
+		Collection<LogEntry> rv=new ArrayList<LogEntry>();
+		GetLogEntries db=new GetLogEntries(GeoConfig.getInstance());
+		try {
+			db.setPointId(point_id);
+			ResultSet rs=db.executeQuery();
+			while(rs.next()) {
+				rv.add(new LogEntry(rs));
+			}
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		rs.close();
-		dbsp.close();
 
-		return(v.elements());
+		return rv;
 	}
 
 	public int getLogId() {
@@ -109,13 +113,13 @@ public class LogEntry extends Object {
 	}
 
 	public void save() throws Exception {
-		DBSP dbsp=new SaveLogEntry(GeoConfig.getInstance());
-		dbsp.set("point_id", pointId);
-		dbsp.set("user_id", userId);
-		dbsp.set("found", found);
-		dbsp.set("info", info);
-		dbsp.executeUpdate();
-		dbsp.close();
+		SaveLogEntry db=new SaveLogEntry(GeoConfig.getInstance());
+		db.setPointId(pointId);
+		db.setUserId(userId);
+		db.setFound(found);
+		db.setInfo(info);
+		db.executeUpdate();
+		db.close();
 	}
 
 }

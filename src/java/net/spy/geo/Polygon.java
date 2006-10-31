@@ -8,15 +8,24 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.spy.db.DBSP;
+import net.spy.db.DBSPLike;
 import net.spy.geo.sp.GetPossibleAreas;
+import net.spy.util.CloseUtil;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  * A closed set of points.
  */
 public class Polygon extends ArrayList<Point> {
 
+	public enum Type {
+		state, county, zipcode, unknown
+	}
+
 	private String name=null;
+	private Type type=null;
 
 	/**
 	 * Get an instance of Polygon.
@@ -24,6 +33,7 @@ public class Polygon extends ArrayList<Point> {
 	public Polygon(String n) {
 		super();
 		this.name=n;
+		type=Type.unknown;
 	}
 
 	/**
@@ -36,18 +46,22 @@ public class Polygon extends ArrayList<Point> {
 	/**
 	 * Get a collection of DBPolygons containing the given Point.
 	 */
-	public static Collection<DBPolygon> getAreasForPoint(Point p) throws Exception {
+	public static Collection<DBPolygon> getAreasForPoint(Point p)
+		throws Exception {
 		Collection<DBPolygon> rv=new ArrayList<DBPolygon>();
-		DBSP dbsp=new GetPossibleAreas(GeoConfig.getInstance());
-		dbsp.set("latitude", (float)p.getLatitude());
-		dbsp.set("longitude", (float)p.getLongitude());
-		ResultSet rs=dbsp.executeQuery();
 		ArrayList<Integer> a=new ArrayList<Integer>();
-		while(rs.next()) {
-			a.add(new Integer(rs.getInt("id")));
+		GetPossibleAreas db=new GetPossibleAreas(GeoConfig.getInstance());
+		try {
+			db.setLatitude((float)p.getLatitude());
+			db.setLongitude((float)p.getLongitude());
+			ResultSet rs=db.executeQuery();
+			while(rs.next()) {
+				a.add(new Integer(rs.getInt("id")));
+			}
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		rs.close();
-		dbsp.close();
 
 		for(int i : a) {
 			DBPolygon poly=new DBPolygon(i);
@@ -84,9 +98,9 @@ public class Polygon extends ArrayList<Point> {
 			double x2=p2.getLongitude();
 			double y=p.getLatitude();
 			double x=p.getLongitude();
-			if(y > Math.min(y1, y2)) {
-				if(y <= Math.max(y1, y2)) {
-					if(x <= Math.max(x1, x2)) {
+			if(y > min(y1, y2)) {
+				if(y <= max(y1, y2)) {
+					if(x <= max(x1, x2)) {
 						if(y1 != y2) {
 							double xinters = (y-y1)*(x2-x1)/(y2-y1)+x1;
 							if(x1 == x2 || x <= xinters) {
@@ -115,6 +129,20 @@ public class Polygon extends ArrayList<Point> {
 	 */
 	protected void setName(String to) {
 		this.name=to;
+	}
+
+	/**
+	 * Get the type of this polygon.
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * Set the type of this polygon.
+	 */
+	protected void setType(Type to) {
+		type=to;
 	}
 
 }

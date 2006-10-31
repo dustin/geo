@@ -4,12 +4,13 @@
 
 package net.spy.geo;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 
 /**
  * Distance and bearing.
  */
-public class GeoVector extends Object implements java.io.Serializable {
+public class GeoVector extends Object implements Serializable {
 
 	private double distance=0d;
 	private double bearing=0d;

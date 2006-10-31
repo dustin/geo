@@ -4,11 +4,15 @@
 
 package net.spy.geo;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import java.sql.ResultSet;
 
-import net.spy.db.DBSP;
+import net.spy.db.DBSPLike;
 import net.spy.geo.sp.GetPolygonByID;
 import net.spy.geo.sp.GetPolygonDataByID;
+import net.spy.util.CloseUtil;
 
 /**
  * A polygon that came from the DB (has a bit more info).
@@ -26,30 +30,45 @@ public class DBPolygon extends Polygon {
 	 */
 	public DBPolygon(int id) throws Exception {
 		super();
-		DBSP dbsp=new GetPolygonByID(GeoConfig.getInstance());
-		dbsp.set("id", id);
-		ResultSet rs=dbsp.executeQuery();
-		if(!rs.next()) {
-			throw new Exception("No such polygon.");
+		GetPolygonByID db=new GetPolygonByID(GeoConfig.getInstance());
+		try {
+			db.setId(id);
+			ResultSet rs=db.executeQuery();
+			if(!rs.next()) {
+				throw new Exception("No such polygon.");
+			}
+			setName(rs.getString("name"));
+			source=rs.getString("source");
+			boundary1=new Point(
+					rs.getFloat("boundaryy1"),
+					rs.getFloat("boundaryx1"));
+			boundary2=new Point(
+					rs.getFloat("boundaryy2"),
+					rs.getFloat("boundaryx2"));
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		setName(rs.getString("name"));
-		source=rs.getString("source");
-		boundary1=new Point(
-			rs.getFloat("boundaryy1"),
-			rs.getFloat("boundaryx1"));
-		boundary2=new Point(
-			rs.getFloat("boundaryy2"),
-			rs.getFloat("boundaryx2"));
-		rs.close();
-		dbsp.close();
 
-		dbsp=new GetPolygonDataByID(GeoConfig.getInstance());
-		dbsp.set("id", id);
-		rs=dbsp.executeQuery();
+		GetPolygonDataByID db2=new GetPolygonDataByID(GeoConfig.getInstance());
+		try {
+			db2.set("id", id);
+			ResultSet rs=db2.executeQuery();
 
-		while(rs.next()) {
-			add(new Point(
-				rs.getFloat("latitude"), rs.getFloat("longitude") ));
+			while(rs.next()) {
+				add(new Point(
+						rs.getFloat("latitude"), rs.getFloat("longitude") ));
+			}
+		} finally {
+			CloseUtil.close((DBSPLike)db2);
+		}
+
+		if(source.startsWith("zt")) {
+			setType(Type.zipcode);
+		} else if(source.startsWith("co")) {
+			setType(Type.county);
+		} else if(source.startsWith("st")) {
+			setType(Type.state);
 		}
 	}
 
@@ -60,30 +79,32 @@ public class DBPolygon extends Polygon {
 		return(source);
 	}
 
-	/**
-	 * Get one boundary corner.
-	 */
-	public Point getBoundary1() {
-		return(boundary1);
+	public double getWesternBorder() {
+		return(min(boundary1.getLongitude(), boundary2.getLongitude()));
 	}
 
-	/**
-	 * Get the other boundary corner.
-	 */
-	public Point getBoundary2() {
-		return(boundary2);
+	public double getEasternBorder() {
+		return(max(boundary1.getLongitude(), boundary2.getLongitude()));
+	}
+
+	public double getNorthernBorder() {
+		return(max(boundary1.getLatitude(), boundary2.getLatitude()));
+	}
+
+	public double getSouthernBorder() {
+		return(min(boundary1.getLatitude(), boundary2.getLatitude()));
 	}
 
 	/**
 	 * Get the center point of this thing.
 	 */
 	public Point getCenter() {
-		double max=Math.max(boundary1.getLatitude(), boundary2.getLatitude());
-		double min=Math.min(boundary1.getLatitude(), boundary2.getLatitude());
+		double max=max(boundary1.getLatitude(), boundary2.getLatitude());
+		double min=min(boundary1.getLatitude(), boundary2.getLatitude());
 		double diff=(max-min);
 		double newlat=max-(diff/2);
-		max=Math.max(boundary1.getLongitude(), boundary2.getLongitude());
-		min=Math.min(boundary1.getLongitude(), boundary2.getLongitude());
+		max=max(boundary1.getLongitude(), boundary2.getLongitude());
+		min=min(boundary1.getLongitude(), boundary2.getLongitude());
 		diff=(max-min);
 		double newlon=max-(diff/2);
 		return(new Point(newlat, newlon));
@@ -93,8 +114,8 @@ public class DBPolygon extends Polygon {
 	 * Get the height of this thing.
 	 */
 	public double getHeight() {
-		double max=Math.max(boundary1.getLatitude(), boundary2.getLatitude());
-		double min=Math.min(boundary1.getLatitude(), boundary2.getLatitude());
+		double max=max(boundary1.getLatitude(), boundary2.getLatitude());
+		double min=min(boundary1.getLatitude(), boundary2.getLatitude());
 		double diff=(max-min);
 		return(diff);
 	}
@@ -103,8 +124,8 @@ public class DBPolygon extends Polygon {
 	 * Get the width of this thing.
 	 */
 	public double getWidth() {
-		double max=Math.max(boundary1.getLongitude(), boundary2.getLongitude());
-		double min=Math.min(boundary1.getLongitude(), boundary2.getLongitude());
+		double max=max(boundary1.getLongitude(), boundary2.getLongitude());
+		double min=min(boundary1.getLongitude(), boundary2.getLongitude());
 		double diff=(max-min);
 		return(diff);
 	}

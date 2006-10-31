@@ -11,10 +11,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import net.spy.db.SpyCacheDB;
-import net.spy.rpc.services.Remote;
-import net.spy.util.SpyConfig;
-
 import net.spy.geo.GeoConfig;
+import net.spy.rpc.services.Remote;
 
 /**
  * Get zipcode information.
@@ -28,6 +26,7 @@ public class ZipCode extends Remote {
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	private Hashtable getZipData(ResultSet rs) throws Exception {
 		Hashtable rv=new Hashtable();
 		rv.put("zipcode", new Integer(rs.getInt("zipcode")));
@@ -100,6 +99,7 @@ public class ZipCode extends Remote {
 	 * @return a Vector of Hashtables representing the zipcodes.  No more
 	 * than 250 records may be returned.
 	 */
+	@SuppressWarnings("unchecked")
 	public Vector lookupZips(Hashtable spec) throws Exception {
 		Vector keys=new Vector();
 		for(Enumeration e=spec.keys(); e.hasMoreElements();) {

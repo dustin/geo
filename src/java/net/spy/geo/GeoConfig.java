@@ -4,29 +4,22 @@
 
 package net.spy.geo;
 
-import java.io.File;
-
 import net.spy.util.SpyConfig;
 
 public class GeoConfig extends SpyConfig {
 	
-	private static GeoConfig instance=null;
-
-	private static File configs[]={
-		new File("/afs/spy.net/misc/web/etc/geo.conf"),
-		new File("/afs/spy.net/misc/web/etc/misc.conf"),
-		new File("geo.conf")
-		};
+	private static GeoConfig instance=new GeoConfig();
 
 	/**
 	 * Get a new GeoConfig.
 	 */
 	private GeoConfig() {
 		super();
-		loadConfig(configs);
+        put("dbConnectionSource", "net.spy.db.JNDIConnectionSource");
+        put("dbSource", "java:/geodb");
 	}
 
-	public static synchronized GeoConfig getInstance() {
+	public static GeoConfig getInstance() {
 		if(instance == null) {
 			instance=new GeoConfig();
 		}

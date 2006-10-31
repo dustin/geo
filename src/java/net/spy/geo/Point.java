@@ -7,8 +7,9 @@ package net.spy.geo;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
 
-import net.spy.db.DBSP;
+import net.spy.db.DBSPLike;
 import net.spy.geo.sp.GetPointByZip;
+import net.spy.util.CloseUtil;
 
 /**
  * Represents a point on earth.
@@ -48,16 +49,21 @@ public class Point extends Object implements java.io.Serializable {
 	 * Get a Point for the given zipcode.
 	 */
 	public static Point getPointByZip(int zipcode) throws Exception {
-		DBSP dbsp=new GetPointByZip(GeoConfig.getInstance());
-		dbsp.set("zipcode", zipcode);
-		ResultSet rs=dbsp.executeQuery();
-		if(!rs.next()) {
-			throw new Exception("Zipcode not found:  " + zipcode);
+		GetPointByZip db=new GetPointByZip(GeoConfig.getInstance());
+		double lon=0;
+		double lat=0;
+		try {
+			db.setZipcode(zipcode);
+			ResultSet rs=db.executeQuery();
+			if(!rs.next()) {
+				throw new Exception("Zipcode not found:  " + zipcode);
+			}
+			lon=rs.getDouble("longitude");
+			lat=rs.getDouble("latitude");
+			rs.close();
+		} finally {
+			CloseUtil.close((DBSPLike)db);
 		}
-		double lon=rs.getDouble("longitude");
-		double lat=rs.getDouble("latitude");
-		rs.close();
-		dbsp.close();
 		return(new Point(lat, lon));
 	}
 
@@ -85,7 +91,7 @@ public class Point extends Object implements java.io.Serializable {
 		NumberFormat nf=NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(4);
 
-		StringBuffer sb=new StringBuffer();
+		StringBuilder sb=new StringBuilder();
 		sb.append(Math.abs(getLatDegrees()));
 		sb.append(" ");
 		sb.append(nf.format(getLatMinutes()));
@@ -146,7 +152,7 @@ public class Point extends Object implements java.io.Serializable {
 	 * Get the string in decimal format.
 	 */
 	public String toDecimalString() {
-		StringBuffer sb=new StringBuffer();
+		StringBuilder sb=new StringBuilder();
 		sb.append(Math.abs(latitude));
 		sb.append(getLatHemisphere());
 		sb.append(" ");
