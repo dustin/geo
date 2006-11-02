@@ -13,6 +13,7 @@ import java.util.Vector;
 import net.spy.db.SpyCacheDB;
 import net.spy.geo.GeoConfig;
 import net.spy.rpc.services.Remote;
+import net.spy.util.CloseUtil;
 
 /**
  * Get zipcode information.
@@ -129,24 +130,27 @@ public class ZipCode extends Remote {
 
 		query.append(" limit 250");
 
-		SpyCacheDB db=new SpyCacheDB(GeoConfig.getInstance());
-		PreparedStatement pst=db.prepareStatement(query.toString(), 900);
-
-		for(int i=0; i<keys.size(); i++) {
-			String k=(String)keys.elementAt(i);
-			pst.setString(i+1, spec.get(k).toString());
-		}
-
-		System.err.println("Query:  " + pst);
-
-		ResultSet rs=pst.executeQuery();
 		Vector rv=new Vector();
-		while(rs.next()) {
-			rv.addElement(getZipData(rs));
+		SpyCacheDB db=new SpyCacheDB(GeoConfig.getInstance());
+		try {
+			PreparedStatement pst=db.prepareStatement(query.toString(), 900);
+
+			for(int i=0; i<keys.size(); i++) {
+				String k=(String)keys.elementAt(i);
+				pst.setString(i+1, spec.get(k).toString());
+			}
+
+			getLogger().debug("Query:  %s", query);
+
+			ResultSet rs=pst.executeQuery();
+			while(rs.next()) {
+				rv.addElement(getZipData(rs));
+			}
+			rs.close();
+			pst.close();
+		} finally {
+			CloseUtil.close(db);
 		}
-		rs.close();
-		pst.close();
-		db.close();
 
 		return(rv);
 	}
