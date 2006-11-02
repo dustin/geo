@@ -20,7 +20,7 @@
 	}
 
 	Point p=new Point(lat, lat_min, lon, lon_min);
-	Collection<DBPolygon> polys=Polygon.getAreasForPoint(p);
+	Collection<DBPolygon> polys=PolygonFactory.getInstance().getAreasForPoint(p);
 
 	NumberFormat nf=NumberFormat.getInstance();
 	nf.setMaximumFractionDigits(4);
