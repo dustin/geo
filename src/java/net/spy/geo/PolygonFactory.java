@@ -1,5 +1,4 @@
 // Copyright (c) 2006  Dustin Sallings <dustin@spy.net>
-// arch-tag: 6A6B2852-4E2B-4EC3-BF9B-623F298F1EAE
 
 package net.spy.geo;
 

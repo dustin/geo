@@ -1,6 +1,0 @@
-# arch-tag: 82E975F8-3500-11D9-9C4B-000393CFE6B8
-
-precious ^(target)$
-
-source ^(.classpath|.project)$
-
