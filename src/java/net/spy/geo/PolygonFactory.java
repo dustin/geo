@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import net.spy.SpyObject;
 import net.spy.cache.SimpleCache;
-import net.spy.db.DBSPLike;
 import net.spy.geo.sp.GetPolygonByID;
 import net.spy.geo.sp.GetPolygonDataByID;
 import net.spy.geo.sp.GetPossibleAreas;
@@ -34,7 +33,7 @@ public class PolygonFactory extends SpyObject {
 
 	/**
 	 * Get the polygon with the given ID.
-	 * 
+	 *
 	 * @param id the ID of the polygon we want.
 	 * @return the polygon
 	 * @throws Exception if we can't get it
@@ -62,7 +61,7 @@ public class PolygonFactory extends SpyObject {
 			rv=new DBPolygon(rs);
 			rs.close();
 		} finally {
-			CloseUtil.close((DBSPLike)db);
+			CloseUtil.close(db);
 		}
 
 		GetPolygonDataByID db2=new GetPolygonDataByID(GeoConfig.getInstance());
@@ -75,7 +74,7 @@ public class PolygonFactory extends SpyObject {
 						rs.getFloat("latitude"), rs.getFloat("longitude") ));
 			}
 		} finally {
-			CloseUtil.close((DBSPLike)db2);
+			CloseUtil.close(db2);
 		}
 
 		return rv;
@@ -86,7 +85,7 @@ public class PolygonFactory extends SpyObject {
 	 */
 	public Collection<DBPolygon> getAreasForPoint(Point p)
 		throws Exception {
-	
+
 		// Find the potential matches.
 		Collection<DBPolygon> rv=new ArrayList<DBPolygon>();
 		ArrayList<Integer> a=new ArrayList<Integer>();
@@ -100,9 +99,9 @@ public class PolygonFactory extends SpyObject {
 			}
 			rs.close();
 		} finally {
-			CloseUtil.close((DBSPLike)db);
+			CloseUtil.close(db);
 		}
-	
+
 		// Filter out all of the polygons that don't contain the given point
 		PolygonFactory pf=getInstance();
 		for(int i : a) {
@@ -111,7 +110,7 @@ public class PolygonFactory extends SpyObject {
 				rv.add(poly);
 			}
 		}
-	
+
 		return(rv);
 	}
 }
