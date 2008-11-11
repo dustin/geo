@@ -20,8 +20,8 @@ public class Point extends Object implements java.io.Serializable {
 	 */
 	public Point(double lat, double lon) {
 		super();
-		this.longitude=lon;
-		this.latitude=lat;
+		longitude=lon;
+		latitude=lat;
 	}
 
 	/**
@@ -30,8 +30,8 @@ public class Point extends Object implements java.io.Serializable {
 	public Point(double lat, double lat_minutes,
 			double lon, double long_minutes) {
 		super();
-		this.longitude=fromhms(lon, long_minutes);
-		this.latitude=fromhms(lat, lat_minutes);
+		longitude=fromhms(lon, long_minutes);
+		latitude=fromhms(lat, lat_minutes);
 	}
 
 	/**
@@ -60,6 +60,7 @@ public class Point extends Object implements java.io.Serializable {
 	/**
 	 * Print this point (hms).
 	 */
+	@Override
 	public String toString() {
 
 		NumberFormat nf=NumberFormat.getInstance();
@@ -153,14 +154,14 @@ public class Point extends Object implements java.io.Serializable {
 	 * Set the longitude.
 	 */
 	protected void setLongitude(double to) {
-		this.longitude=to;
+		longitude=to;
 	}
 
 	/**
 	 * Set the latitude.
 	 */
 	protected void setLatitude(double to) {
-		this.latitude=to;
+		latitude=to;
 	}
 
 	// Degree sin.
@@ -187,7 +188,7 @@ public class Point extends Object implements java.io.Serializable {
 			*cos(long_b-long_a)) + (sin(lat_a)*sin(lat_b));
 
 		double aob=Math.acos(cosaob);
-		
+
 		// OK, got the distance.
 		double distance=aob*3959;
 

@@ -41,8 +41,8 @@ public class ZipCode extends Remote {
 	/**
 	 * Lookup a zipcode.
 	 */
-	public Hashtable lookupZip(int zipcode) throws Exception {
-		Hashtable h=null;
+	public Hashtable<?,?> lookupZip(int zipcode) throws Exception {
+		Hashtable<?,?> h=null;
 
 		SpyCacheDB db=new SpyCacheDB(GeoConfig.getInstance());
 		PreparedStatement pst=db.prepareStatement(

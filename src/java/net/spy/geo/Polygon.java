@@ -4,11 +4,10 @@
 
 package net.spy.geo;
 
-import java.util.ArrayList;
-
-
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+
+import java.util.ArrayList;
 
 /**
  * A closed set of points.
@@ -27,7 +26,7 @@ public class Polygon extends ArrayList<Point> {
 	 */
 	public Polygon(String n) {
 		super();
-		this.name=n;
+		name=n;
 		type=Type.unknown;
 	}
 
@@ -41,6 +40,7 @@ public class Polygon extends ArrayList<Point> {
 	/**
 	 * A string of this polygon.
 	 */
+	@Override
 	public String toString() {
 		return(name + " has " + size() + " points.");
 	}
@@ -93,7 +93,7 @@ public class Polygon extends ArrayList<Point> {
 	 * Set the name of this polygon.
 	 */
 	protected void setName(String to) {
-		this.name=to;
+		name=to;
 	}
 
 	/**

@@ -20,13 +20,14 @@ public class GeoVector extends Object implements Serializable {
 	 */
 	public GeoVector(double d, double b) {
 		super();
-		this.distance=d;
-		this.bearing=b;
+		distance=d;
+		bearing=b;
 	}
 
 	/**
 	 * String representation.
 	 */
+	@Override
 	public String toString() {
 		NumberFormat nf=NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(4);
